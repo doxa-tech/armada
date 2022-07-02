@@ -6,5 +6,7 @@ services:
       - "3333:3333"
     volumes:
       - "osiaVol2:/data"
+    environment:
+      INSTAGRAM_TOKEN: ${INSTAGRAM_TOKEN}
 volumes:
   osiaVol2:
