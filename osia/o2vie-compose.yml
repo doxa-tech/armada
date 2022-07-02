@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  osia:
+    image: "ghcr.io/nkcr/osia-deploy:latest"
+    ports:
+      - "3333:3333"
+    volumes:
+      - "osiaVol2:/data"
+volumes:
+  osiaVol2:
