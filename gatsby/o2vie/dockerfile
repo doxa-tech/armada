@@ -1,0 +1,19 @@
+# docker build --build-arg DIRECTUS_O2VIE_TOKEN=XXX -t o2vie .
+FROM node:16-alpine AS builder
+
+ARG DIRECTUS_O2VIE_TOKEN
+
+RUN apk update
+RUN apk add git
+
+RUN git clone --depth=1 https://github.com/doxa-tech/bullenetwork-constellation.git
+
+WORKDIR /bullenetwork-constellation/o2vie-chatel.ch/
+RUN npm install
+RUN npm install -g gatsby-cli
+RUN echo "DIRECTUS_O2VIE_TOKEN=${DIRECTUS_O2VIE_TOKEN}" >> .env.production
+RUN gatsby build
+
+FROM nginx:1-alpine
+
+COPY --from=builder /bullenetwork-constellation/o2vie-chatel.ch/public/ /usr/share/nginx/html/

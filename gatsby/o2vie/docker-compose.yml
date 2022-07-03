@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  o2vie:
+    build:
+      context: .
+      args:
+        - DIRECTUS_O2VIE_TOKEN=${DIRECTUS_O2VIE_TOKEN}
+    ports:
+      - "4001:80"
