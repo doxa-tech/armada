@@ -1,0 +1,33 @@
+version: "3.9"
+services:
+  o2vie:
+    image: "nginx:1-alpine"
+    ports:
+      - "4001:80"
+    volumes:
+      - o2vieVol1:/usr/share/nginx/html:ro
+  hodor_conf:
+    image: "alpine:3.16"
+    command: >
+      sh -c "
+        rm -rf ./hodor-config.json &&
+        wget https://raw.githubusercontent.com/doxa-tech/armada/main/static-websites/hodor-config.json &&
+        cp -R ./hodor-config.json /tmp/conf/config.json
+      "
+    volumes:
+      - hodor1:/tmp/conf/
+  hodor:
+    image: "ghcr.io/nkcr/hodor-deploy:latest"
+    ports:
+      - "3334:3333"
+    environment:
+      - CONFIG_PATH=/data/config.json
+    volumes:
+      - "hodor1:/data"
+      - "o2vieVol1:/deploy/o2vie"
+    depends_on:
+      - hodor_conf
+volumes:
+  # a shared volume that hodor_conf uses to pass the config to hodor
+  hodor1:
+  o2vieVol1:
