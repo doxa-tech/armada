@@ -5,7 +5,7 @@ services:
     ports:
       - "4001:80"
     volumes:
-      - staticWebsitesVol1:/usr/share/nginx/html:ro
+      - staticWebsitesVol1:/var/html:ro
       - nginxConf1:/etc/nginx/conf.d/
   hodor_conf:
     image: "alpine:3.16"
