@@ -1,11 +1,12 @@
 version: "3.9"
 services:
-  o2vie:
+  static_websites:
     image: "nginx:1-alpine"
     ports:
       - "4001:80"
     volumes:
-      - o2vieVol1:/usr/share/nginx/html:ro
+      - staticWebsitesVol1:/usr/share/nginx/html:ro
+      - nginxConf1:/etc/nginx/conf.d/
   hodor_conf:
     image: "alpine:3.16"
     command: >
@@ -16,6 +17,16 @@ services:
       "
     volumes:
       - hodor1:/tmp/conf/
+  nginx_conf:
+    image: "alpine:3.16"
+    command: >
+      sh -c "
+        rm -rf ./nginx.conf &&
+        wget https://raw.githubusercontent.com/doxa-tech/armada/main/static-websites/nginx.conf &&
+        cp -R ./nginx.conf /tmp/conf/static_websites.conf
+      "
+    volumes:
+      - nginxConf1:/tmp/conf/
   hodor:
     image: "ghcr.io/nkcr/hodor-deploy:latest"
     ports:
@@ -24,10 +35,11 @@ services:
       - CONFIG_PATH=/data/config.json
     volumes:
       - "hodor1:/data"
-      - "o2vieVol1:/deploy/o2vie"
+      - "staticWebsitesVol1:/deploy"
     depends_on:
       - hodor_conf
 volumes:
   # a shared volume that hodor_conf uses to pass the config to hodor
   hodor1:
-  o2vieVol1:
+  staticWebsitesVol1:
+  nginxConf1:
