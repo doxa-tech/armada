@@ -26,7 +26,7 @@ services:
     ports:
       - "4001:80"
     volumes:
-      - staticWebsitesVol1:/var/html/:ro
+      - staticWebsitesVol2:/var/html/:ro
       - nginxConfVol1:/etc/nginx/conf.d/
     depends_on:
       - nginx_conf
@@ -41,11 +41,12 @@ services:
       - TMPDIR=/deploy/
     volumes:
       - "hodorConfVol1:/data"
-      - "staticWebsitesVol1:/deploy/"
+      - "staticWebsitesVol2:/deploy/"
     depends_on:
       - hodor_conf
 volumes:
   # a shared volume that hodor_conf uses to pass the config to hodor
   hodorConfVol1:
-  staticWebsitesVol1:
+  staticWebsitesVol2:
+    external: true
   nginxConfVol1:
