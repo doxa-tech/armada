@@ -34,8 +34,37 @@ First, create an empty file `acme.json`:
 
 `touch acme.json`
 
-Then, deploy the stack:
+Then, create two overlay networks:
+
+`docker network create -d overlay agent_network`
+
+`docker network create -d overlay public`
+
+Finally, deploy the stack:
 
 `docker stack deploy portainer -c portainer.yml`
 
 You can now access Portainer through the domain specified in `portainer.yml`. You can view the state of the stack via `docker service ls`.
+
+## Labelize nodes
+
+On the manager, you can list the nodes:
+
+`docker node ls`
+
+To add a label, run
+
+`docker node update --label-add key:value <NODE HOSTNAME>`
+
+To display the node's labels:
+
+`docker node inspect --format '{{ .Spec.Labels }}' <NODE HOSTNAME>`
+
+In your docker compose, you can specify the deploy target using the labels:
+
+```yaml
+deploy:
+  placement: 
+      constraints: 
+          - node.labels.key == value
+```
