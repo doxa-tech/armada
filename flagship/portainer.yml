@@ -9,7 +9,7 @@ services:
       - --providers.docker=true
       - --providers.docker.swarmMode=true
       - --providers.docker.network=public
-      - --api
+      - --api.dashboard=true
       - --log.level=ERROR
       - --certificatesresolvers.leresolver.acme.tlsChallenge=true
       - --certificatesresolvers.leresolver.acme.email=kocher.ke@gmail.com
@@ -28,6 +28,15 @@ services:
       replicas: 1
       placement:
         constraints: [node.role == manager]
+      labels:
+        - traefik.http.routers.dashboard.rule=Host(`compass.doxatech.ch`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+        - traefik.http.routers.dashboard.service=api@internal
+        - traefik.http.routers.dashboard.entrypoints=websecure
+        - traefik.http.routers.dashboard.tls.certresolver=leresolver
+        - traefik.http.routers.dashboard.middlewares=auth
+        - traefik.http.middlewares.auth.basicauth.users=admin:$$apr1$$rfP66Nwp$$JWxEZZKay.jqQcKUxGk7n1
+        # Dummy service for Swarm port detection. The port can be any valid integer value.
+        - traefik.http.services.dummy-svc.loadbalancer.server.port=9999
   
   agent:
     image: portainer/agent:latest
@@ -59,17 +68,19 @@ services:
       placement:
         constraints: [node.role == manager]
       labels:
-      - traefik.http.routers.portainer.rule=Host(`flagship.doxatech.ch`)
-      - traefik.http.routers.portainer.entrypoints=websecure
-      - traefik.http.services.portainer.loadbalancer.server.port=9000
-      - traefik.http.routers.portainer.service=portainer
-      - traefik.http.routers.portainer.tls.certresolver=leresolver
-
+        - traefik.http.routers.portainer.service=portainer
+        - traefik.http.routers.portainer.rule=Host(`flagship.doxatech.ch`)
+        - traefik.http.routers.portainer.entrypoints=websecure
+        - traefik.http.routers.portainer.tls.certresolver=leresolver
+        - traefik.http.services.portainer.loadbalancer.server.port=9000
+        
 networks:
   public:
     driver: overlay
+    external: true
   agent_network:
     driver: overlay
+    external: true
 
 volumes:
   portainer_data:
