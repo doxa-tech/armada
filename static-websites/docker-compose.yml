@@ -1,6 +1,6 @@
 version: "3.9"
 services:
-  static_websites:
+  static-websites:
     image: "nginx:1-alpine"
     ports:
       - "4001:80"
@@ -29,11 +29,16 @@ services:
       placement:
         constraints: [ node.labels.project == bullenetwork ]
       labels:
-        - traefik.http.routers.static-websites.rule="Host(`dev2.o2vie-chatel.ch`) || Host(`dev2.bullenetwork.ch`)"
-        - traefik.http.routers.static-websites.entrypoints=websecure
-        - traefik.http.services.static-websites.loadbalancer.server.port=3334
-        - traefik.http.routers.static-websites.service=static-websites
-        - traefik.http.routers.static-websites.tls.certresolver=leresolver
+        - traefik.http.routers.bn_static-websites.rule="Host(`dev2.o2vie-chatel.ch`) || Host(`dev2.bullenetwork.ch`)"
+        - traefik.http.routers.bn_static-websites.entrypoints=websecure
+        - traefik.http.services.bn_static-websites.loadbalancer.server.port=4001
+        - traefik.http.routers.bn_static-websites.service=static-websites
+        - traefik.http.routers.bn_static-websites.tls.certresolver=leresolver
+        - traefik.http.routers.bn_hodor.rule=Host(`hodor.doxatech.ch`)
+        - traefik.http.routers.bn_hodor.entrypoints=websecure
+        - traefik.http.services.bn_hodor.loadbalancer.server.port=3334
+        - traefik.http.routers.bn_hodor.service=hodor
+        - traefik.http.routers.bn_hodor.tls.certresolver=leresolver
 volumes:
   staticWebsitesVol2:
     external: true
