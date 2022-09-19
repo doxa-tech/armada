@@ -1,35 +1,13 @@
 version: "3.9"
 services:
-  hodor_conf:
-    image: "alpine:3.16"
-    command: >
-      sh -c "
-        rm -rf ./hodor-config.json &&
-        wget https://raw.githubusercontent.com/doxa-tech/armada/main/static-websites/hodor-config.json &&
-        cp -R ./hodor-config.json /tmp/conf/config.json
-      "
-    volumes:
-      - hodorConfVol1:/tmp/conf/
-  nginx_conf:
-    image: "alpine:3.16"
-    command: >
-      sh -c "
-        rm -rf ./nginx.conf &&
-        wget https://raw.githubusercontent.com/doxa-tech/armada/main/static-websites/nginx.conf &&
-        rm -rf /tmp/conf/* &&
-        cp -R ./nginx.conf /tmp/conf/static_websites.conf
-      "
-    volumes:
-      - nginxConfVol1:/tmp/conf/
   static_websites:
     image: "nginx:1-alpine"
     ports:
       - "4001:80"
-    volumes:
-      - staticWebsitesVol2:/var/html/:ro
-      - nginxConfVol1:/etc/nginx/conf.d/
-    depends_on:
+    config:
       - nginx_conf
+    volumes:
+      - "staticWebsitesVol2:/var/html/:ro"
   hodor:
     image: "ghcr.io/nkcr/hodor-deploy:latest"
     ports:
@@ -39,14 +17,28 @@ services:
       # To avoid cross reference links between volumes, we must downlad the
       # .tar.gz on the same volume as where it will be deployed.
       - TMPDIR=/deploy/
-    volumes:
-      - "hodorConfVol1:/data"
-      - "staticWebsitesVol2:/deploy/"
-    depends_on:
+    config:
       - hodor_conf
+    volumes:
+      - "staticWebsitesVol2:/deploy/"
+    networks:
+      - public
+    deploy:
+      mode: replicated
+      placement:
+        constraints: [ project == bullenetwork ]
+      labels:
+        - traefik.http.routers.portainer.rule=Host(`dev2.o2vie-chatel.ch`)
+        - traefik.http.routers.portainer.rule=Host(`dev2.bullenetwork.ch`)
+        - traefik.http.routers.portainer.entrypoints=websecure
+        - traefik.http.services.portainer.loadbalancer.server.port=3334
+        - traefik.http.routers.portainer.service=portainer
+        - traefik.http.routers.portainer.tls.certresolver=leresolver
 volumes:
-  # a shared volume that hodor_conf uses to pass the config to hodor
-  hodorConfVol1:
   staticWebsitesVol2:
     external: true
-  nginxConfVol1:
+configs:
+  hodor_conf:
+    file: ./hodor_config.json
+  nginx_conf:
+    file: ./nginx.conf

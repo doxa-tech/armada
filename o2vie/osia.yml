@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  osia:
+    image: "ghcr.io/nkcr/osia-deploy:latest"
+    ports:
+      - "3333:3333"
+    volumes:
+      - "osiaVol2:/data"
+    environment:
+      INSTAGRAM_TOKEN: ${INSTAGRAM_TOKEN}
+    networks:
+      - public
+    deploy:
+      mode: replicated
+      placement:
+        constraints: [project == bullenetwork]
+      labels:
+      - traefik.http.routers.portainer.rule=Host(`osia.o2vie-chatel.ch`)
+      - traefik.http.routers.portainer.entrypoints=websecure
+      - traefik.http.services.portainer.loadbalancer.server.port=3333
+      - traefik.http.routers.portainer.service=portainer
+      - traefik.http.routers.portainer.tls.certresolver=leresolver
+volumes:
+  osiaVol2:
