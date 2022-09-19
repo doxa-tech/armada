@@ -25,15 +25,15 @@ services:
       - public
     deploy:
       mode: replicated
+      replicas: 1
       placement:
-        constraints: [ project == bullenetwork ]
+        constraints: [ node.labels.project == bullenetwork ]
       labels:
-        - traefik.http.routers.portainer.rule=Host(`dev2.o2vie-chatel.ch`)
-        - traefik.http.routers.portainer.rule=Host(`dev2.bullenetwork.ch`)
-        - traefik.http.routers.portainer.entrypoints=websecure
-        - traefik.http.services.portainer.loadbalancer.server.port=3334
-        - traefik.http.routers.portainer.service=portainer
-        - traefik.http.routers.portainer.tls.certresolver=leresolver
+        - traefik.http.routers.static-websites.rule="Host(`dev2.o2vie-chatel.ch`) || Host(`dev2.bullenetwork.ch`)"
+        - traefik.http.routers.static-websites.entrypoints=websecure
+        - traefik.http.services.static-websites.loadbalancer.server.port=3334
+        - traefik.http.routers.static-websites.service=static-websites
+        - traefik.http.routers.static-websites.tls.certresolver=leresolver
 volumes:
   staticWebsitesVol2:
     external: true
