@@ -1,6 +1,7 @@
+# stack name: bn_o2vie-osia
 version: "3.9"
 services:
-  o2vie-osia:
+  osia:
     image: "ghcr.io/nkcr/osia-deploy:latest"
     ports:
       - "3333:3333"
@@ -16,10 +17,14 @@ services:
       placement:
         constraints: [node.labels.project == bullenetwork]
       labels:
-      - traefik.http.routers.bn_o2vie-osia.rule=Host(`osia.o2vie-chatel.ch`)
-      - traefik.http.routers.bn_o2vie-osia.entrypoints=websecure
-      - traefik.http.services.bn_o2vie-osia.loadbalancer.server.port=3333
-      - traefik.http.routers.bn_o2vie-osia.service=o2vie-osia
-      - traefik.http.routers.bn_o2vie-osia.tls.certresolver=leresolver
+        - traefik.http.routers.bn_o2vie-osia.rule=Host(`osia.o2vie-chatel.ch`)
+        - traefik.http.routers.bn_o2vie-osia.entrypoints=websecure
+        - traefik.http.routers.bn_o2vie-osia.tls.certresolver=leresolver
+        - traefik.http.routers.bn_o2vie-osia.service=bn_o2vie-osia
+        - traefik.http.services.bn_o2vie-osia.loadbalancer.server.port=3333
+networks
+  public:
+    external: true
+
 volumes:
   osiaVol2:
