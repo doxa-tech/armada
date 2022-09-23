@@ -68,3 +68,9 @@ deploy:
       constraints: 
           - node.labels.key == value
 ```
+
+## Misc
+
+To change the number of tasks retained in the history of a service:
+
+`docker swarm update --task-history-limit 0`
