@@ -20,7 +20,7 @@ services:
         # webserver
         - traefik.http.routers.bn_static-websites_webserver.rule=Host(`dev2.o2vie-chatel.ch`) || Host(`dev2.bullenetwork.ch`)
         - traefik.http.routers.bn_static-websites_webserver.entrypoints=websecure
-        - traefik.http.routers.bn_static-websites.tls.certresolver=leresolver
+        - traefik.http.routers.bn_static-websites_webserver.tls.certresolver=leresolver
         - traefik.http.routers.bn_static-websites_webserver.service=bn_static-websites_webserver
         - traefik.http.services.bn_static-websites_webserver.loadbalancer.server.port=4001
   hodor:
