@@ -1,7 +1,6 @@
 # stack name: bn_static-websites
 
 version: "3.9"
-
 services:
   webserver:
     image: "nginx:1-alpine"
@@ -24,7 +23,8 @@ services:
       - hodor_conf
     volumes:
       - "staticWebsitesVol2:/deploy/"
-    networks: public
+    networks: 
+      - public
     deploy:
       mode: replicated
       replicas: 1
@@ -41,7 +41,7 @@ services:
         - traefik.http.routers.bn_static-websites_hodor.rule=Host(`hodor.doxatech.ch`)
         - traefik.http.routers.bn_static-websites_hodor.entrypoints=websecure
         - traefik.http.routers.bn_static-websites_hodor.tls.certresolver=leresolver
-        - traefik.http.routers.bn_static-websites_hodor.service=bn_static-websites_webserver
+        - traefik.http.routers.bn_static-websites_hodor.service=bn_static-websites_hodor
         - traefik.http.services.bn_static-websites_hodor.loadbalancer.server.port=3334
 
 networks:
@@ -50,7 +50,6 @@ networks:
 
 volumes:
   staticWebsitesVol2:
-    external: true
 
 configs:
   hodor_conf:
