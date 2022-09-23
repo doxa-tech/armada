@@ -8,7 +8,8 @@ services:
     ports:
       - "4001:80"
     configs:
-      - bn_nginx_conf
+      - source: bn_nginx_conf
+        target: /etc/nginx/conf.d/static-websites.conf
     volumes:
       - "staticWebsitesVol2:/var/html/:ro"
     networks:
@@ -30,12 +31,13 @@ services:
     ports:
       - "3334:3333"
     environment:
-      - CONFIG_PATH=/bn_hodor_conf
+      - CONFIG_PATH=/data/config.json
       # To avoid cross reference links between volumes, we must downlad the
       # .tar.gz on the same volume as where it will be deployed.
       - TMPDIR=/deploy/
     configs:
-      - bn_hodor_conf
+      - source: bn_hodor_conf
+        target: /data/config.json
     volumes:
       - "staticWebsitesVol2:/deploy/"
     networks:
