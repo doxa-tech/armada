@@ -1,6 +1,9 @@
+# stack name: bn_static-websites
+
 version: "3.9"
+
 services:
-  static-websites:
+  webserver:
     image: "nginx:1-alpine"
     ports:
       - "4001:80"
@@ -21,27 +24,34 @@ services:
       - hodor_conf
     volumes:
       - "staticWebsitesVol2:/deploy/"
-    networks:
-      - public
+    networks: public
     deploy:
       mode: replicated
       replicas: 1
       placement:
         constraints: [ node.labels.project == bullenetwork ]
       labels:
-        - traefik.http.routers.bn_static-websites.rule="Host(`dev2.o2vie-chatel.ch`) || Host(`dev2.bullenetwork.ch`)"
-        - traefik.http.routers.bn_static-websites.entrypoints=websecure
-        - traefik.http.services.bn_static-websites.loadbalancer.server.port=4001
-        - traefik.http.routers.bn_static-websites.service=static-websites
+        # webserver
+        - traefik.http.routers.bn_static-websites_webserver.rule="Host(`dev2.o2vie-chatel.ch`) || Host(`dev2.bullenetwork.ch`)"
+        - traefik.http.routers.bn_static-websites_webserver.entrypoints=websecure
         - traefik.http.routers.bn_static-websites.tls.certresolver=leresolver
-        - traefik.http.routers.bn_hodor.rule=Host(`hodor.doxatech.ch`)
-        - traefik.http.routers.bn_hodor.entrypoints=websecure
-        - traefik.http.services.bn_hodor.loadbalancer.server.port=3334
-        - traefik.http.routers.bn_hodor.service=hodor
-        - traefik.http.routers.bn_hodor.tls.certresolver=leresolver
+        - traefik.http.routers.bn_static-websites_webserver.service=bn_static-websites_webserver
+        - traefik.http.services.bn_static-websites_webserver.loadbalancer.server.port=4001
+        # hodor
+        - traefik.http.routers.bn_static-websites_hodor.rule=Host(`hodor.doxatech.ch`)
+        - traefik.http.routers.bn_static-websites_hodor.entrypoints=websecure
+        - traefik.http.routers.bn_static-websites_hodor.tls.certresolver=leresolver
+        - traefik.http.routers.bn_static-websites_hodor.service=bn_static-websites_webserver
+        - traefik.http.services.bn_static-websites_hodor.loadbalancer.server.port=3334
+
+networks:
+  public:
+    external: true
+
 volumes:
   staticWebsitesVol2:
     external: true
+
 configs:
   hodor_conf:
     file: ./hodor_config.json
