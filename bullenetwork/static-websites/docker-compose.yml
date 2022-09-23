@@ -21,7 +21,7 @@ services:
         constraints: [ node.labels.project == bullenetwork ]
       labels:
         # webserver
-        - traefik.http.routers.bn_static-websites_webserver.rule=Host(`dev2.o2vie-chatel.ch`) || Host(`dev2.bullenetwork.ch`)
+        - traefik.http.routers.bn_static-websites_webserver.rule=Host(`dev2.o2vie-chatel.ch`, `dev2.bullenetwork.ch`)
         - traefik.http.routers.bn_static-websites_webserver.entrypoints=websecure
         - traefik.http.routers.bn_static-websites_webserver.tls.certresolver=leresolver
         - traefik.http.routers.bn_static-websites_webserver.service=bn_static-websites_webserver
