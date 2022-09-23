@@ -11,6 +11,8 @@ services:
       - bn_nginx_conf
     volumes:
       - "staticWebsitesVol2:/var/html/:ro"
+    networks:
+      - public
     deploy:
       mode: replicated
       replicas: 1
@@ -28,7 +30,7 @@ services:
     ports:
       - "3334:3333"
     environment:
-      - CONFIG_PATH=/data/config.json
+      - CONFIG_PATH=/bn_hodor_conf
       # To avoid cross reference links between volumes, we must downlad the
       # .tar.gz on the same volume as where it will be deployed.
       - TMPDIR=/deploy/
