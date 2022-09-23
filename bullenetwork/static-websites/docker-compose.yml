@@ -50,10 +50,10 @@ networks:
     external: true
 
 configs:
-  hodor_conf:
-    file: ./hodor_config.json
-  nginx_conf:
-    file: ./nginx.conf
+  bn_hodor_conf:
+    external: true
+  bn_nginx_conf:
+    external: true
 
 volumes:
   staticWebsitesVol2:
