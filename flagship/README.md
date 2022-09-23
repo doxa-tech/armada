@@ -54,7 +54,7 @@ On the manager, you can list the nodes:
 
 To add a label, run
 
-`docker node update --label-add key:value <NODE HOSTNAME>`
+`docker node update --label-add key=value <NODE HOSTNAME>`
 
 To display the node's labels:
 
