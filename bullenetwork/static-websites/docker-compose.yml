@@ -49,12 +49,11 @@ networks:
   public:
     external: true
 
-volumes:
-  staticWebsitesVol2:
-
-
 configs:
   hodor_conf:
     file: ./hodor_config.json
   nginx_conf:
     file: ./nginx.conf
+
+volumes:
+  staticWebsitesVol2:
