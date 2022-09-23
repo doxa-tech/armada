@@ -11,6 +11,18 @@ services:
       - bn_nginx_conf
     volumes:
       - "staticWebsitesVol2:/var/html/:ro"
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ node.labels.project == bullenetwork ]
+      labels:
+        # webserver
+        - traefik.http.routers.bn_static-websites_webserver.rule="Host(`dev2.o2vie-chatel.ch`) || Host(`dev2.bullenetwork.ch`)"
+        - traefik.http.routers.bn_static-websites_webserver.entrypoints=websecure
+        - traefik.http.routers.bn_static-websites.tls.certresolver=leresolver
+        - traefik.http.routers.bn_static-websites_webserver.service=bn_static-websites_webserver
+        - traefik.http.services.bn_static-websites_webserver.loadbalancer.server.port=4001
   hodor:
     image: "ghcr.io/nkcr/hodor-deploy:latest"
     ports:
@@ -32,12 +44,6 @@ services:
       placement:
         constraints: [ node.labels.project == bullenetwork ]
       labels:
-        # webserver
-        - traefik.http.routers.bn_static-websites_webserver.rule="Host(`dev2.o2vie-chatel.ch`) || Host(`dev2.bullenetwork.ch`)"
-        - traefik.http.routers.bn_static-websites_webserver.entrypoints=websecure
-        - traefik.http.routers.bn_static-websites.tls.certresolver=leresolver
-        - traefik.http.routers.bn_static-websites_webserver.service=bn_static-websites_webserver
-        - traefik.http.services.bn_static-websites_webserver.loadbalancer.server.port=4001
         # hodor
         - traefik.http.routers.bn_static-websites_hodor.rule=Host(`hodor.doxatech.ch`)
         - traefik.http.routers.bn_static-websites_hodor.entrypoints=websecure
