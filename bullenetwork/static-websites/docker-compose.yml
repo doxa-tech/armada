@@ -1,6 +1,7 @@
 # stack name: bn_static-websites
 
 version: "3.9"
+
 services:
   webserver:
     image: "nginx:1-alpine"
@@ -23,7 +24,7 @@ services:
       - hodor_conf
     volumes:
       - "staticWebsitesVol2:/deploy/"
-    networks: 
+    networks:
       - public
     deploy:
       mode: replicated
@@ -50,6 +51,7 @@ networks:
 
 volumes:
   staticWebsitesVol2:
+
 
 configs:
   hodor_conf:
