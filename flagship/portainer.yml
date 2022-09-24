@@ -5,6 +5,8 @@ services:
     image: traefik:latest
     command:
       - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.permanent=true
       - --entrypoints.websecure.address=:443
       - --providers.docker=true
       - --providers.docker.swarmMode=true
@@ -37,14 +39,9 @@ services:
         - traefik.http.services.dummy-svc.loadbalancer.server.port=9999
         # auth
         - traefik.http.middlewares.dashboard-auth.basicauth.users=admin:$$apr1$$rfP66Nwp$$JWxEZZKay.jqQcKUxGk7n1
-        # force HTTPS
-        - traefik.http.middlewares.forcehttps.redirectscheme.scheme=https
-        - traefik.http.middlewares.forcehttps.redirectscheme.permanent=true
         # middlewares
-        - traefik.http.routers.dashboard.middlewares=dashboard
-        - traefik.http.middlewares.dashboard.chain.middlewares=forcehttps,dashboard-auth
-        
-  
+        - traefik.http.routers.dashboard.middlewares=dashboard-auth
+
   agent:
     image: portainer/agent:latest
     environment:
