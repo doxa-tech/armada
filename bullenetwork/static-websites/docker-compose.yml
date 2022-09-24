@@ -22,6 +22,7 @@ services:
         - traefik.http.routers.bn_static-websites_webserver.rule=Host(`dev2.o2vie-chatel.ch`) || Host(`dev2.bullenetwork.ch`)
         - traefik.http.routers.bn_static-websites_webserver.entrypoints=websecure
         - traefik.http.routers.bn_static-websites_webserver.tls.certresolver=leresolver
+        - traefik.http.routers.bn_static-websites_webserver.middlewares=forcehttps
         - traefik.http.services.bn_static-websites_webserver.loadbalancer.server.port=80
 
   hodor:

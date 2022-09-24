@@ -33,10 +33,17 @@ services:
         - traefik.http.routers.dashboard.service=api@internal
         - traefik.http.routers.dashboard.entrypoints=websecure
         - traefik.http.routers.dashboard.tls.certresolver=leresolver
-        - traefik.http.routers.dashboard.middlewares=auth
-        - traefik.http.middlewares.auth.basicauth.users=admin:$$apr1$$rfP66Nwp$$JWxEZZKay.jqQcKUxGk7n1
         # Dummy service for Swarm port detection. The port can be any valid integer value.
         - traefik.http.services.dummy-svc.loadbalancer.server.port=9999
+        # auth
+        - traefik.http.middlewares.dashboard-auth.basicauth.users=admin:$$apr1$$rfP66Nwp$$JWxEZZKay.jqQcKUxGk7n1
+        # force HTTPS
+        - traefik.http.middlewares.forcehttps.redirectscheme.scheme=https
+        - traefik.http.middlewares.forcehttps.redirectscheme.permanent=true
+        # middlewares
+        - traefik.http.routers.dashboard.middlewares=dashboard
+        - traefik.http.middlewares.dashboard.chain.middlewares=forcehttps,dashboard-auth
+        
   
   agent:
     image: portainer/agent:latest
