@@ -11,7 +11,7 @@ services:
       - --providers.docker.network=public
       - --api.dashboard=true
       - --log.level=ERROR
-      - --certificatesresolvers.leresolver.acme.tlsChallenge=true
+      - --certificatesresolvers.leresolver.acme.tlschallenge=true
       - --certificatesresolvers.leresolver.acme.email=kocher.ke@gmail.com
       - --certificatesresolvers.leresolver.acme.storage=acme.json
 
