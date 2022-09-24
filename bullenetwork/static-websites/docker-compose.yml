@@ -12,6 +12,8 @@ services:
       - staticWebsitesVol2:/var/html/:ro
     networks:
       - public
+    expose:
+      - "80"
     deploy:
       mode: replicated
       replicas: 1
