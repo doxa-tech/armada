@@ -20,7 +20,6 @@ services:
         - traefik.http.routers.bn_o2vie_osia.rule=Host(`osia.o2vie-chatel.ch`)
         - traefik.http.routers.bn_o2vie_osia.entrypoints=websecure
         - traefik.http.routers.bn_o2vie_osia.tls.certresolver=leresolver
-        - traefik.http.routers.bn_o2vie_osia.middlewares=forcehttps
         - traefik.http.services.bn_o2vie_osia.loadbalancer.server.port=3333
 
 networks:
