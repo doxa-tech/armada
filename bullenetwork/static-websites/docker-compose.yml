@@ -22,8 +22,6 @@ services:
         - traefik.http.routers.bn_static-websites_webserver.rule=Host(`dev2.o2vie-chatel.ch`) || Host(`dev2.bullenetwork.ch`)
         - traefik.http.routers.bn_static-websites_webserver.entrypoints=websecure
         - traefik.http.routers.bn_static-websites_webserver.tls.certresolver=leresolver
-        - traefik.http.routers.bn_static-websites_webserver.tls.domains[0].main=dev2.o2vie-chatel.ch
-        - traefik.http.routers.bn_static-websites_webserver.tls.domains[1].main=dev2.bullenetwork.ch
 
   hodor:
     image: ghcr.io/nkcr/hodor-deploy:latest
