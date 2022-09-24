@@ -13,10 +13,13 @@ services:
       - --providers.docker.network=public
       - --api.dashboard=true
       - --log.level=ERROR
-      - --certificatesresolvers.leresolver.acme.httpchallenge.entrypoint=web
+      - --certificatesresolvers.leresolver.acme.dnschallenge=true
+      - --certificatesresolvers.leresolver.acme.dnschallenge.provider=cloudflare
       - --certificatesresolvers.leresolver.acme.email=kocher.ke@gmail.com
       - --certificatesresolvers.leresolver.acme.storage=acme.json
-
+    environment:
+      - CLOUDFLARE_EMAIL=<EMAIL>
+      - CLOUDFLARE_DNS_API_TOKEN=<TOKEN>
     ports:
       - 80:80
       - 443:443

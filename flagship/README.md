@@ -30,11 +30,13 @@ Your cluster is now ready to orchestrate containers !
 
 Copy the `portainer.yml` file to the manager node.
 
-First, create an empty file `acme.json` and set the permission:
+First, create an empty file `acme.json` and set the permission. The file will contains the TLS certificates generated with `Let's Encrypt`.
 
 `touch acme.json`
 
 `chmod 600 acme.json`
+
+You also need an API token from `Cloudflare` to setup the DNS challenge for the certificates ([ACME documentation](https://go-acme.github.io/lego/dns/cloudflare/)).
 
 Then, create two overlay networks:
 
@@ -42,7 +44,7 @@ Then, create two overlay networks:
 
 `docker network create -d overlay public`
 
-Finally, deploy the stack:
+Finally, deploy the stack by copying the file on the server, replacing the secrets and running:
 
 `docker stack deploy portainer -c portainer.yml`
 
