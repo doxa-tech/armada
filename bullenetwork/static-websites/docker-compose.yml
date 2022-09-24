@@ -26,8 +26,6 @@ services:
 
   hodor:
     image: ghcr.io/nkcr/hodor-deploy:latest
-    ports:
-      - "3334:3333"
     environment:
       - CONFIG_PATH=/data/config.json
       # To avoid cross reference links between volumes, we must downlad the
@@ -50,8 +48,7 @@ services:
         - traefik.http.routers.bn_static-websites_hodor.rule=Host(`hodor.doxatech.ch`)
         - traefik.http.routers.bn_static-websites_hodor.entrypoints=websecure
         - traefik.http.routers.bn_static-websites_hodor.tls.certresolver=leresolver
-        - traefik.http.routers.bn_static-websites_hodor.service=bn_static-websites_hodor
-        - traefik.http.services.bn_static-websites_hodor.loadbalancer.server.port=3334
+        - traefik.http.services.bn_static-websites_hodor.loadbalancer.server.port=3333
 
 networks:
   public:

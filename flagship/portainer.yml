@@ -53,6 +53,8 @@ services:
       mode: global
       placement:
         constraints: [node.platform.os == linux]
+      labels:
+        - traefik.enable=false
 
   portainer:
     image: portainer/portainer-ce:latest
@@ -68,7 +70,6 @@ services:
       placement:
         constraints: [node.role == manager]
       labels:
-        - traefik.http.routers.portainer.service=portainer
         - traefik.http.routers.portainer.rule=Host(`flagship.doxatech.ch`)
         - traefik.http.routers.portainer.entrypoints=websecure
         - traefik.http.routers.portainer.tls.certresolver=leresolver

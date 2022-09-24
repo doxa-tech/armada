@@ -30,9 +30,11 @@ Your cluster is now ready to orchestrate containers !
 
 Copy the `portainer.yml` file to the manager node.
 
-First, create an empty file `acme.json`:
+First, create an empty file `acme.json` and set the permission:
 
 `touch acme.json`
+
+`chmod 600 acme.json`
 
 Then, create two overlay networks:
 
