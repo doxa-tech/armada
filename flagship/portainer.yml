@@ -1,8 +1,8 @@
-version: '3.2'
+version: "3.2"
 
 services:
   traefik:
-    image: "traefik:latest"
+    image: traefik:latest
     command:
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
@@ -11,7 +11,7 @@ services:
       - --providers.docker.network=public
       - --api.dashboard=true
       - --log.level=ERROR
-      - --certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web
+      - --certificatesresolvers.leresolver.acme.httpchallenge.entrypoint=web
       - --certificatesresolvers.leresolver.acme.email=kocher.ke@gmail.com
       - --certificatesresolvers.leresolver.acme.storage=acme.json
 

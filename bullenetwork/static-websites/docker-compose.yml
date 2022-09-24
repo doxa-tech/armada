@@ -4,14 +4,12 @@ version: "3.9"
 
 services:
   webserver:
-    image: "nginx:1-alpine"
-    ports:
-      - "4001:80"
+    image: nginx:1-alpine
     configs:
       - source: bn_nginx_conf
         target: /etc/nginx/conf.d/static-websites.conf
     volumes:
-      - "staticWebsitesVol2:/var/html/:ro"
+      - staticWebsitesVol2:/var/html/:ro
     networks:
       - public
     deploy:
@@ -26,10 +24,9 @@ services:
         - traefik.http.routers.bn_static-websites_webserver.tls.certresolver=leresolver
         - traefik.http.routers.bn_static-websites_webserver.tls.domains[0].main=dev2.o2vie-chatel.ch
         - traefik.http.routers.bn_static-websites_webserver.tls.domains[1].main=dev2.bullenetwork.ch
-        - traefik.http.routers.bn_static-websites_webserver.service=bn_static-websites_webserver
-        - traefik.http.services.bn_static-websites_webserver.loadbalancer.server.port=4001
+
   hodor:
-    image: "ghcr.io/nkcr/hodor-deploy:latest"
+    image: ghcr.io/nkcr/hodor-deploy:latest
     ports:
       - "3334:3333"
     environment:

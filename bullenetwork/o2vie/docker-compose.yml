@@ -4,11 +4,9 @@ version: "3.9"
 
 services:
   osia:
-    image: "ghcr.io/nkcr/osia-deploy:latest"
-    ports:
-      - "3333:3333"
+    image: ghcr.io/nkcr/osia-deploy:latest
     volumes:
-      - "osiaVol2:/data"
+      - osiaVol2:/data
     environment:
       INSTAGRAM_TOKEN: ${INSTAGRAM_TOKEN}
     networks:
