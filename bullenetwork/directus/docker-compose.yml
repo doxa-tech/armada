@@ -5,12 +5,11 @@ version: "3.9"
 services:
   database:
     # Postgres runs on port 5432
-    container_name: database
     image: postgres:14
     volumes:
       - directusDataVol1:/var/lib/postgresql/data
     networks:
-      - directus_internal
+      - bn_directus-internal
     environment:
       POSTGRES_USER: 'directus'
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -23,10 +22,9 @@ services:
 
   cache:
     # Redis runs on port 6379
-    container_name: cache
     image: redis:7
     networks:
-      - directus_internal
+      - bn_directus-internal
     deploy:
       mode: replicated
       replicas: 1
@@ -37,7 +35,7 @@ services:
     # Directus runs on port 8055
     image: directus/directus:9
     networks:
-      - directus_internal
+      - bn_directus-internal
       - public
     deploy:
       mode: replicated
