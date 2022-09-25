@@ -9,7 +9,7 @@ services:
     volumes:
       - directusDataVol1:/var/lib/postgresql/data
     networks:
-      - bn_directus-internal
+      - internal
     environment:
       POSTGRES_USER: 'directus'
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -24,7 +24,7 @@ services:
     # Redis runs on port 6379
     image: redis:7
     networks:
-      - bn_directus-internal
+      - internal
     deploy:
       mode: replicated
       replicas: 1
@@ -35,7 +35,7 @@ services:
     # Directus runs on port 8055
     image: directus/directus:9
     networks:
-      - bn_directus-internal
+      - internal
       - public
     deploy:
       mode: replicated
@@ -83,7 +83,7 @@ services:
 networks:
   public:
     external: true
-  bn_directus-internal:
+  internal:
 
 
 configs:
