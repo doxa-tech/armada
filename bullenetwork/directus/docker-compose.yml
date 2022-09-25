@@ -79,8 +79,8 @@ services:
 
       STORAGE_GCS_KEY_FILENAME: /directus/gcs_key.json
       STORAGE_GCS_BUCKET: bullenetwork-directus-truite
-    configs:
-      - source: directus_gcs_key
+    secrets:
+      - source: bn_directus_gcs_key
         target: /directus/gcs_key.json
 
 networks:
@@ -89,7 +89,7 @@ networks:
   internal:
 
 
-configs:
+secrets:
   bn_directus_gcs_key:
     external: true
 
