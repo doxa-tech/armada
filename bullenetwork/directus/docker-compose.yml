@@ -87,7 +87,7 @@ networks:
 
 
 configs:
-  directus_gcs_key:
+  bn_directus_gcs_key:
     external: true
 
 volumes:
