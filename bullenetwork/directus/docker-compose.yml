@@ -19,6 +19,8 @@ services:
       replicas: 1
       placement:
         constraints: [ node.labels.project == bullenetwork ]
+      labels:
+        - traefik.enable=false
 
   cache:
     # Redis runs on port 6379
@@ -30,6 +32,8 @@ services:
       replicas: 1
       placement:
         constraints: [ node.labels.project == bullenetwork ]
+      labels:
+        - traefik.enable=false
 
   directus:
     # Directus runs on port 8055
@@ -43,7 +47,6 @@ services:
       placement:
         constraints: [ node.labels.project == bullenetwork ]
       labels:
-        # webserver
         - traefik.http.routers.bn_directus.rule=Host(`vanil.bullenetwork.ch`)
         - traefik.http.routers.bn_directus.entrypoints=websecure
         - traefik.http.routers.bn_directus.tls.certresolver=leresolver
