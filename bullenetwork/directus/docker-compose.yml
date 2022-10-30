@@ -79,6 +79,9 @@ services:
 
       STORAGE_GCS_KEY_FILENAME: /directus/gcs_key.json
       STORAGE_GCS_BUCKET: bullenetwork-directus-truite
+
+      CORS_ENABLED: ${CORS_ENABLED}
+      CORS_ORIGIN: ${CORS_ORIGIN}
     secrets:
       - source: bn_directus_gcs_key
         target: /directus/gcs_key.json
