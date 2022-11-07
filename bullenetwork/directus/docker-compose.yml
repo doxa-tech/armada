@@ -65,7 +65,7 @@ services:
       DB_USER: 'directus'
       DB_PASSWORD: ${POSTGRES_PASSWORD}
 
-      DB_POOL_MIN: ${DB_POOL_MIN}
+      DB_POOL_MIN: 0
 
       CACHE_ENABLED: 'true'
       CACHE_STORE: 'redis'
