@@ -37,7 +37,7 @@ services:
 
   directus:
     # Directus runs on port 8055
-    image: directus/directus:9
+    image: directus/directus:9.20
     networks:
       - internal
       - public
