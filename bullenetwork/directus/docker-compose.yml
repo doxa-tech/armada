@@ -37,7 +37,7 @@ services:
 
   directus:
     # Directus runs on port 8055
-    image: directus/directus:9.20
+    image: directus/directus:9
     networks:
       - internal
       - public
@@ -64,8 +64,6 @@ services:
       DB_DATABASE: 'directus'
       DB_USER: 'directus'
       DB_PASSWORD: ${POSTGRES_PASSWORD}
-
-      DB_POOL_MIN: 0
 
       CACHE_ENABLED: 'true'
       CACHE_STORE: 'redis'
