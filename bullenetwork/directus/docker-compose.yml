@@ -74,11 +74,11 @@ services:
 
       STORAGE_LOCATIONS: gcs
 
-      STORAGE_GCS_PUBLIC_URL: https://console.cloud.google.com/storage/browser/bullenetwork-directus-truite/
+      STORAGE_GCS_PUBLIC_URL: https://console.cloud.google.com/storage/browser/bullenetwork-directus-vanil/
       STORAGE_GCS_DRIVER: gcs
 
       STORAGE_GCS_KEY_FILENAME: /directus/gcs_key.json
-      STORAGE_GCS_BUCKET: bullenetwork-directus-truite
+      STORAGE_GCS_BUCKET: bullenetwork-directus-vanil
 
       CORS_ENABLED: ${CORS_ENABLED}
       CORS_ORIGIN: ${CORS_ORIGIN}
