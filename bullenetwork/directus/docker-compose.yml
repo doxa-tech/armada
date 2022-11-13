@@ -67,6 +67,8 @@ services:
 
       DB_POOL_MIN: 'number:0'
 
+      MAX_PAYLOAD_SIZE: '512mb'
+
       CACHE_ENABLED: 'true'
       CACHE_STORE: 'redis'
       CACHE_REDIS: 'redis://cache:6379'
