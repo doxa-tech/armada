@@ -52,7 +52,7 @@ services:
         - traefik.http.routers.bn_directus.tls.certresolver=leresolver
         - traefik.http.services.bn_directus.loadbalancer.server.port=8055
         - traefik.http.routers.bn_directus.middlewares=bn_file_transfer
-        - traefik.http.middlewares.bn_file_transfer.buffering.memRequestBodyBytes=512000000 # 512 MB
+        - traefik.http.middlewares.bn_file_transfer.buffering.maxRequestBodyBytes=512000000 # 512 MB
     depends_on:
       - cache
       - database
