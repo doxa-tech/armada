@@ -88,6 +88,28 @@ services:
       - source: bn_directus_gcs_key
         target: /directus/gcs_key.json
 
+  gcsauth:
+    # gcsauth runs on port 3426
+    image: ghcr.io/doxa-tech/bullenetwork-constellation-gcsauth:latest
+    networks:
+      - public
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ node.labels.project == bullenetwork ]
+      labels:
+        - traefik.http.routers.bn_gcsauth.rule=Host(`gcsauth.bullenetwork.ch`)
+        - traefik.http.routers.bn_gcsauth.entrypoints=websecure
+        - traefik.http.routers.bn_gcsauth.tls.certresolver=leresolver
+        - traefik.http.services.bn_gcsauth.loadbalancer.server.port=3426
+    environment:
+      GCS_BUCKET_NAME: "bullenetwork-directus-vanil"
+      GCS_PRIVATE_PATH: "/config/gcs_key.json"
+    secrets:
+      - source: bn_directus_gcs_key
+        target: /config/gcs_key.json
+
 networks:
   public:
     external: true
