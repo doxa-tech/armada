@@ -67,7 +67,7 @@ services:
       DB_USER: 'directus'
       DB_PASSWORD: ${POSTGRES_PASSWORD}
 
-      DB_POOL_MIN: 'number:0'
+      DB_POOL__MIN: 0
 
       MAX_PAYLOAD_SIZE: '512mb'
 
