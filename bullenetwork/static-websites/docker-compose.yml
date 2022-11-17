@@ -36,6 +36,7 @@ services:
         target: /data/config.json
     volumes:
       - "staticWebsitesVol2:/deploy/"
+      - "hodorVol1:/data/"
     networks:
       - public
     deploy:
@@ -62,3 +63,4 @@ configs:
 
 volumes:
   staticWebsitesVol2:
+  hodorVol1:
