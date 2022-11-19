@@ -49,6 +49,10 @@ services:
         - traefik.http.routers.bn_static-websites_hodor.entrypoints=websecure
         - traefik.http.routers.bn_static-websites_hodor.tls.certresolver=leresolver
         - traefik.http.services.bn_static-websites_hodor.loadbalancer.server.port=3333
+        # auth
+        - traefik.http.middlewares.hodor-auth.basicauth.users=hodor:${HODOR_PWD}
+        # middlewares
+        - traefik.http.routers.bn_static-websites_hodor.middlewares=hodor-auth
 
 networks:
   public:
