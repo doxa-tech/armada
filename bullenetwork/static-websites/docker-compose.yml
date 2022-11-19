@@ -45,22 +45,22 @@ services:
       placement:
         constraints: [ node.labels.project == bullenetwork ]
       labels: 
-        - traefik.http.routers.bn_static-websites_hodor_hook.rule=Host(`hodor.doxatech.ch`) && PathPrefix(`/api/hook/`)
-        - traefik.http.routers.bn_static-websites_hodor_hook.entrypoints=websecure
-        - traefik.http.routers.bn_static-websites_hodor_hook.tls.certresolver=leresolver
-        - traefik.http.services.bn_static-websites_hodor_hook.loadbalancer.server.port=3333
-        # auth
-        - traefik.http.middlewares.hodor-auth.basicauth.users=hodor:${HODOR_PWD}
-        # middlewares
-        - traefik.http.routers.bn_static-websites_hodor_hook.middlewares=hodor-auth
-
         # hodor
         - traefik.http.routers.bn_static-websites_hodor.rule=Host(`hodor.doxatech.ch`)
         - traefik.http.routers.bn_static-websites_hodor.entrypoints=websecure
         - traefik.http.routers.bn_static-websites_hodor.tls.certresolver=leresolver
         - traefik.http.services.bn_static-websites_hodor.loadbalancer.server.port=3333
+        # hodor hooks (authenticated)
+        - traefik.http.routers.bn_static-websites_hodor_hook.rule=Host(`hodor.doxatech.ch`) && PathPrefix(`/api/hook/`)
+        - traefik.http.routers.bn_static-websites_hodor_hook.entrypoints=websecure
+        - traefik.http.routers.bn_static-websites_hodor_hook.tls.certresolver=leresolver
+        - traefik.http.routers.bn_static-websites_hodor_hook.service=bn_static-websites_hodor
+        # auth
+        - traefik.http.middlewares.hodor-auth.basicauth.users=hodor:${HODOR_PWD}
+        # middlewares
+        - traefik.http.routers.bn_static-websites_hodor_hook.middlewares=hodor-auth
 
-networks:
+networks:   
   public:
     external: true
 
