@@ -30,3 +30,4 @@ docker service ps my_service
 docker service logs my_container
 # remove the stack
 docker stack rm my_stack_name
+```

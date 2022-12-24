@@ -1,0 +1,75 @@
+# stack name: rj_static-websites
+
+version: "3.9"
+
+services:
+  webserver:
+    image: nginx:1-alpine
+    configs:
+      - source: rj_nginx_conf
+        target: /etc/nginx/conf.d/static-websites.conf
+    volumes:
+      - staticWebsitesVol2:/var/html/:ro
+    networks:
+      - public
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ node.labels.project == rencontrejeunesse ]
+      labels:
+        # webserver
+        - traefik.http.routers.rj_static-websites_webserver.rule=Host(`rencontredejeunesse.ch`)
+        - traefik.http.routers.rj_static-websites_webserver.entrypoints=websecure
+        - traefik.http.routers.rj_static-websites_webserver.tls.certresolver=leresolver
+        - traefik.http.services.rj_static-websites_webserver.loadbalancer.server.port=80
+
+  hodor:
+    image: ghcr.io/nkcr/hodor-deploy:latest
+    environment:
+      - CONFIG_PATH=/data/config.json
+      # To avoid cross reference links between volumes, we must downlad the
+      # .tar.gz on the same volume as where it will be deployed.
+      - TMPDIR=/deploy/
+    configs:
+      - source: rj_hodor_conf
+        target: /data/config.json
+    volumes:
+      - "staticWebsitesVol2:/deploy/"
+      - "hodorVol1:/data/"
+    networks:
+      - public
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ node.labels.project == rencontrejeunesse ]
+      labels:
+        # hodor
+        - traefik.http.routers.rj_static-websites_hodor.rule=Host(`hodor.rencontredejeunesse.ch`)
+        - traefik.http.routers.rj_static-websites_hodor.entrypoints=websecure
+        - traefik.http.routers.rj_static-websites_hodor.tls.certresolver=leresolver
+        - traefik.http.services.rj_static-websites_hodor.loadbalancer.server.port=3333
+        # hodor hooks (authenticated)
+        - traefik.http.routers.rj_static-websites_hodor_hook.rule=Host(`hodor.rencontredejeunesse.ch`) && PathPrefix(`/api/hook/`)
+        - traefik.http.routers.rj_static-websites_hodor_hook.entrypoints=websecure
+        - traefik.http.routers.rj_static-websites_hodor_hook.tls.certresolver=leresolver
+        - traefik.http.routers.rj_static-websites_hodor_hook.service=rj_static-websites_hodor
+        # auth
+        - traefik.http.middlewares.hodor-auth.basicauth.users=hodor:${HODOR_PWD}
+        # middlewares
+        - traefik.http.routers.rj_static-websites_hodor_hook.middlewares=hodor-auth
+
+networks:
+  public:
+    external: true
+
+configs:
+  rj_hodor_conf:
+    external: true
+  rj_nginx_conf:
+    external: true
+
+volumes:
+  staticWebsitesVol2:
+  hodorVol1:
