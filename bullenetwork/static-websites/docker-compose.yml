@@ -56,9 +56,9 @@ services:
         - traefik.http.routers.bn_static-websites_hodor_hook.tls.certresolver=leresolver
         - traefik.http.routers.bn_static-websites_hodor_hook.service=bn_static-websites_hodor
         # auth
-        - traefik.http.middlewares.hodor-auth.basicauth.users=hodor:${HODOR_PWD}
+        - traefik.http.middlewares.bn_hodor-auth.basicauth.users=hodor:${HODOR_PWD}
         # middlewares
-        - traefik.http.routers.bn_static-websites_hodor_hook.middlewares=hodor-auth
+        - traefik.http.routers.bn_static-websites_hodor_hook.middlewares=bn_hodor-auth
 
 networks:   
   public:
