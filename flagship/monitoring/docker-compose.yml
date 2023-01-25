@@ -1,0 +1,44 @@
+# stack name : fs_monitoring
+version: "3.9"
+
+services:
+  prometheus:
+    # Prometheus runs on port 9090
+    image: prom/prometheus:latest
+    configs:
+      - source: prometheus.yml
+        target: /etc/prometheus/prometheus.yml
+    networks:
+      - public
+    volumes:
+      - promotheusDataVol1:/etc/prometheus
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ node.role == manager ]
+      labels:
+        - traefik.enable=false
+
+  grafana:
+    # Grafana runs on port 3000
+    image: grafana/grafana-oss:latest
+    networks:
+      - public
+    volumes:
+     - grafanaDataVol1:/var/lib/grafana
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ node.role == manager ]
+      labels:
+        - traefik.routes.monitoring.rule=Host(`monitoring.doxatech.ch`)
+
+networks:
+  public:
+    external: true
+
+volumes:
+  promotheusDataVol1:
+  grafanaDataVol1:
