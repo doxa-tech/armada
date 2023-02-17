@@ -44,6 +44,10 @@ services:
         - traefik.http.middlewares.dashboard-auth.basicauth.users=admin:$$apr1$$rfP66Nwp$$JWxEZZKay.jqQcKUxGk7n1
         # middlewares
         - traefik.http.routers.dashboard.middlewares=dashboard-auth
+        # redirect www to non-www
+        - traefik.http.middlewares.redirect-www.redirectregex.regex=^https://www\\.(.+)
+        - traefik.http.middlewares.redirect-www.redirectregex.replacement=https://$${1}
+        - traefik.http.middlewares.redirect-www.redirectregex.permanent=true
 
   agent:
     image: portainer/agent:latest
