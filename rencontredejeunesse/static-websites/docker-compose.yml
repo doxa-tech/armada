@@ -19,7 +19,7 @@ services:
         constraints: [ node.labels.project == rencontrejeunesse ]
       labels:
         # webserver
-        - traefik.http.routers.rj_static-websites_webserver.rule=Host(`rencontredejeunesse.ch`)
+        - traefik.http.routers.rj_static-websites_webserver.rule=Host(`rencontredejeunesse.ch`) || Host(`www.rencontredejeunesse.ch`)
         - traefik.http.routers.rj_static-websites_webserver.entrypoints=websecure
         - traefik.http.routers.rj_static-websites_webserver.tls.certresolver=leresolver
         - traefik.http.services.rj_static-websites_webserver.loadbalancer.server.port=80
