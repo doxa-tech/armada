@@ -18,7 +18,6 @@ services:
       - --certificatesresolvers.leresolver.acme.email=kocher.ke@gmail.com
       - --certificatesresolvers.leresolver.acme.storage=acme.json
     environment:
-      - CLOUDFLARE_EMAIL=<EMAIL>
       - CLOUDFLARE_DNS_API_TOKEN=<TOKEN>
     ports:
       - 80:80
@@ -45,7 +44,7 @@ services:
         # middlewares
         - traefik.http.routers.dashboard.middlewares=dashboard-auth
         # redirect www to non-www
-        - traefik.http.middlewares.redirect-www.redirectregex.regex=^https://www\\.(.+)
+        - traefik.http.middlewares.redirect-www.redirectregex.regex=^https://www\.(.+)
         - traefik.http.middlewares.redirect-www.redirectregex.replacement=https://$${1}
         - traefik.http.middlewares.redirect-www.redirectregex.permanent=true
 
