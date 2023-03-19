@@ -6,7 +6,7 @@ services:
     # Prometheus runs on port 9090
     image: prom/prometheus:latest
     configs:
-      - source: prometheus.yml
+      - source: fs_prometheus_conf
         target: /etc/prometheus/prometheus.yml
     networks:
       - public
@@ -42,3 +42,7 @@ networks:
 volumes:
   promotheusDataVol1:
   grafanaDataVol1:
+
+configs:
+  fs_prometheus_conf:
+    external: true
