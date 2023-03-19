@@ -10,8 +10,6 @@ services:
         target: /etc/prometheus/prometheus.yml
     networks:
       - public
-    expose:
-      - 9090
     volumes:
       - promotheusDataVol1:/etc/prometheus
     deploy:
