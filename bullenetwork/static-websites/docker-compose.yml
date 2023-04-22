@@ -26,8 +26,11 @@ services:
         # redirect
         - traefik.http.routers.bn_quartierlibre.rule=Host(`quartierlibreromont.ch`)
         - traefik.http.routers.bn_quartierlibre.middlewares=quartierlibre-redirect
+        - traefik.http.routers.bn_quartierlibre.entrypoints=websecure
+        - traefik.http.routers.bn_quartierlibre.tls.certresolver=leresolver
         - traefik.http.middlewares.quartierlibre-redirect.redirectregex.regex=^.*
         - traefik.http.middlewares.quartierlibre-redirect.redirectregex.replacement=https://bullenetwork.ch/quartier-libre
+        - traefik.http.middlewares.quartierlibre-redirect.redirectregex.permanent=true
 
   hodor:
     image: ghcr.io/nkcr/hodor-deploy:latest
