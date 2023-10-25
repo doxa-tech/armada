@@ -19,7 +19,7 @@ services:
         constraints: [ node.labels.project == bullenetwork ]
       labels:
         # webserver
-        - traefik.http.routers.bn_static-websites_webserver.rule=Host(`o2vie-chatel.ch`) || Host(`bullenetwork.ch`) || Host(`eebulle.ch`) || Host(`enhaut.eebulle.ch`) || Host(`waykup.ch`)
+        - traefik.http.routers.bn_static-websites_webserver.rule=HostRegexp(`{reg:(www\.)?o2vie-chatel.ch}`, `{reg:(www\.)?bullenetwork.ch}`, `{reg:(www\.)?eebulle.ch}`, `{reg:(www\.)?enhaut.eebulle.ch}`, `{reg:(www\.)?waykup.ch}`)
         - traefik.http.routers.bn_static-websites_webserver.entrypoints=websecure
         - traefik.http.routers.bn_static-websites_webserver.tls.certresolver=leresolver
         - traefik.http.services.bn_static-websites_webserver.loadbalancer.server.port=80
@@ -31,6 +31,8 @@ services:
         - traefik.http.middlewares.quartierlibre-redirect.redirectregex.regex=^.*
         - traefik.http.middlewares.quartierlibre-redirect.redirectregex.replacement=https://bullenetwork.ch/quartier-libre
         - traefik.http.middlewares.quartierlibre-redirect.redirectregex.permanent=true
+        # www redirect
+        - traefik.http.routers.bn_static-websites_webserver.middlewares=redirect-www
 
   hodor:
     image: ghcr.io/nkcr/hodor-deploy:latest
@@ -52,7 +54,7 @@ services:
       replicas: 1
       placement:
         constraints: [ node.labels.project == bullenetwork ]
-      labels: 
+      labels:
         # hodor
         - traefik.http.routers.bn_static-websites_hodor.rule=Host(`hodor.doxatech.ch`)
         - traefik.http.routers.bn_static-websites_hodor.entrypoints=websecure
@@ -68,7 +70,7 @@ services:
         # middlewares
         - traefik.http.routers.bn_static-websites_hodor_hook.middlewares=bn_hodor-auth
 
-networks:   
+networks:
   public:
     external: true
 
