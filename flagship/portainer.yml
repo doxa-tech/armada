@@ -2,7 +2,7 @@ version: "3.2"
 
 services:
   traefik:
-    image: traefik:latest
+    image: traefik:2.10.3
     command:
       - --entrypoints.web.address=:80
       - --entrypoints.web.http.redirections.entryPoint.to=websecure
@@ -49,7 +49,7 @@ services:
         - traefik.http.middlewares.redirect-www.redirectregex.permanent=true
 
   agent:
-    image: portainer/agent:latest
+    image: portainer/agent:2.19.1
     environment:
       # REQUIRED: Should be equal to the service name prefixed by "tasks." when
       # deployed inside an overlay network
@@ -67,7 +67,7 @@ services:
         - traefik.enable=false
 
   portainer:
-    image: portainer/portainer-ce:latest
+    image: portainer/portainer-ce:2.19.1
     command: -H tcp://tasks.agent:9001 --tlsskipverify
     volumes:
       - portainer_data:/data
