@@ -19,7 +19,7 @@ services:
         constraints: [ node.labels.project == bullenetwork ]
       labels:
         # webserver
-        - traefik.http.routers.bn_static-websites_webserver.rule=HostRegexp(`{reg:(www\.)?o2vie-chatel.ch}`, `{reg:(www\.)?bullenetwork.ch}`, `{reg:(www\.)?eebulle.ch}`, `{reg:(www\.)?enhaut.eebulle.ch}`, `{reg:(www\.)?waykup.ch}`)
+        - traefik.http.routers.bn_static-websites_webserver.rule=Host(`www.eebulle.ch`) || Host(`eebulle.ch`) || Host(`www.bullenetwork.ch`) || Host(`bullenetwork.ch`) || Host(`www.o2vie-chatel.ch`) || Host(`o2vie-chatel.ch`) || Host(`www.enhaut.eebulle.ch`) || Host(`enhaut.eebulle.ch`) || Host(`www.waykup.ch`) || Host(`waykup.ch`)
         - traefik.http.routers.bn_static-websites_webserver.entrypoints=websecure
         - traefik.http.routers.bn_static-websites_webserver.tls.certresolver=leresolver
         - traefik.http.services.bn_static-websites_webserver.loadbalancer.server.port=80
