@@ -48,7 +48,7 @@ Finally, deploy the stack by copying the file `portainer.yml` on the server, rep
 
 `docker stack deploy portainer -c portainer.yml`
 
-You can now access Portainer through the domain specified in `portainer.yml`. You can view the state of the stack via `docker service ls` and debug a service using `docker service ps <name>`.
+You can now access Portainer through the domain specified in `portainer.yml`. You can view the state of the stack via `docker service ls`, display a service using `docker service ps <name>`, and get live logs with `docker service logs -f <name>`.
 
 ## Labelize nodes
 
