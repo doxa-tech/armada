@@ -1,0 +1,105 @@
+# stack name: rj_chatwoot
+
+version: '3'
+
+services:
+  base: &base
+    image: chatwoot/chatwoot:latest
+    volumes:
+      - /data/storage:/app/storage
+
+  rails:
+    # rails runs on port 3000
+    <<: *base
+    networks:
+      - internal
+      - public
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - NODE_ENV=production
+      - RAILS_ENV=production
+      - INSTALLATION_ENV=docker
+    entrypoint: docker/entrypoints/rails.sh
+    command: ['bundle', 'exec', 'rails', 's', '-p', '3000', '-b', '0.0.0.0']
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ node.labels.project == rencontrejeunesse ]
+      labels:
+        # rails
+        - traefik.http.routers.rj_chatwoot_rails.rule=Host(`support.rencontredejeunesse.ch`) || Host(`www.support.rencontredejeunesse.ch`)
+        - traefik.http.routers.rj_chatwoot_rails.entrypoints=websecure
+        - traefik.http.routers.rj_chatwoot_rails.tls.certresolver=leresolver
+        - traefik.http.services.rj_chatwoot_rails.loadbalancer.server.port=80
+        - traefik.http.routers.rj_chatwoot_rails.middlewares=redirect-www
+
+  sidekiq:
+    <<: *base
+    networks:
+      - internal
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - NODE_ENV=production
+      - RAILS_ENV=production
+      - INSTALLATION_ENV=docker
+    command: ['bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml']
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ node.labels.project == rencontrejeunesse ]
+      labels:
+        - traefik.enable=false
+
+  postgres:
+    # postgres runs on port 5432
+    networks:
+      - internal
+    image: postgres:12
+    restart: always
+    volumes:
+      - postgresDataVol1:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=chatwoot
+      - POSTGRES_USER=postgres
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ node.labels.project == rencontrejeunesse ]
+      labels:
+        - traefik.enable=false
+
+  redis:
+    # postgres runs on port 6379
+    networks:
+      - internal
+    image: redis:alpine
+    restart: always
+    command: ["sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\""]
+    env_file: .env
+    volumes:
+      - redisDataVol1:/data/redis:/data
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ node.labels.project == rencontrejeunesse ]
+      labels:
+        - traefik.enable=false
+
+networks:
+  public:
+    external: true
+  internal:
+
+volumes:
+  postgresDataVol1:
+  redisDataVol1:
