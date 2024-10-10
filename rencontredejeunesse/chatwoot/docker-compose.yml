@@ -3,14 +3,11 @@
 version: '3'
 
 services:
-  base: &base
-    image: chatwoot/chatwoot:latest
-    volumes:
-      - chatwootDataVol1:/data/storage:/app/storage
-
   rails:
     # rails runs on port 3000
-    <<: *base
+    image: chatwoot/chatwoot:latest
+    volumes:
+      - chatwootDataVol1:/app/storage
     networks:
       - internal
       - public
@@ -18,14 +15,17 @@ services:
       - postgres
       - redis
     environment:
-      - NODE_ENV=production
-      - RAILS_ENV=production
-      - INSTALLATION_ENV=docker
-      - FRONTEND_URL=https://support.rencontredejeunesse.ch
-      - POSTGRES_HOST=postgres
-      - POSTGRES_DATABASE=chatwoot
-      - POSTGRES_USERNAME=postgres
-      - REDIS_URL=redis://redis:6379
+      NODE_ENV: production
+      RAILS_ENV: production
+      INSTALLATION_ENV: docker
+      FRONTEND_URL: https://support.rencontredejeunesse.ch
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_URL: redis://redis:6379
+      POSTGRES_HOST: postgres
+      POSTGRES_DATABASE: chatwoot
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
     entrypoint: docker/entrypoints/rails.sh
     command: ['bundle', 'exec', 'rails', 's', '-p', '3000', '-b', '0.0.0.0']
     restart: always
@@ -43,17 +43,21 @@ services:
         - traefik.http.routers.rj_chatwoot_rails.middlewares=redirect-www
 
   sidekiq:
-    <<: *base
-    networks:
-      - internal
+    image: chatwoot/chatwoot:latest
     depends_on:
       - postgres
       - redis
     environment:
-      - NODE_ENV=production
-      - RAILS_ENV=production
-      - INSTALLATION_ENV=docker
-      - REDIS_URL=redis://redis:6379
+      NODE_ENV: production
+      RAILS_ENV: production
+      INSTALLATION_ENV: docker
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_URL: redis://redis:6379
+      POSTGRES_HOST: postgres
+      POSTGRES_DATABASE: chatwoot
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
     command: ['bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml']
     restart: always
     deploy:
@@ -73,8 +77,9 @@ services:
     volumes:
       - postgresDataVol1:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=chatwoot
-      - POSTGRES_USER=postgres
+      POSTGRES_DB: chatwoot
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     deploy:
       mode: replicated
       replicas: 1
