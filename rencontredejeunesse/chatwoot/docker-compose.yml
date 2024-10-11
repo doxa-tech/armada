@@ -39,7 +39,7 @@ services:
         - traefik.http.routers.rj_chatwoot_rails.rule=Host(`support.rencontredejeunesse.ch`) || Host(`www.support.rencontredejeunesse.ch`)
         - traefik.http.routers.rj_chatwoot_rails.entrypoints=websecure
         - traefik.http.routers.rj_chatwoot_rails.tls.certresolver=leresolver
-        - traefik.http.services.rj_chatwoot_rails.loadbalancer.server.port=80
+        - traefik.http.services.rj_chatwoot_rails.loadbalancer.server.port=3000
         - traefik.http.routers.rj_chatwoot_rails.middlewares=redirect-www
 
   sidekiq:
