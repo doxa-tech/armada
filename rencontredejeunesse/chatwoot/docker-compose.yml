@@ -44,6 +44,8 @@ services:
 
   sidekiq:
     image: chatwoot/chatwoot:latest
+    networks:
+      - internal
     depends_on:
       - postgres
       - redis
