@@ -1,0 +1,65 @@
+# stack name: rj_rocketchat
+
+version: '3'
+
+services:
+  rocketchat:
+    image: registry.rocket.chat/rocketchat/rocket.chat:latest
+    restart: always
+    networks:
+      - internal
+      - public
+    environment:
+      MONGO_URL: mongodb://mongodb:27017/rocketchat?replicaSet=rs0
+      MONGO_OPLOG_URL: mongodb://mongodb:27017/local?replicaSet=rs0
+      ROOT_URL: https://support.rencontredejeunesse.ch
+      PORT: 3000
+      DEPLOY_METHOD: docker
+    expose:
+      - 3000
+    depends_on:
+      - mongodb
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ node.labels.project == rencontrejeunesse ]
+      labels:
+        # rocketchat
+        - traefik.http.routers.rj_rocketchat.rule=Host(`support.rencontredejeunesse.ch`) || Host(`www.support.rencontredejeunesse.ch`)
+        - traefik.http.routers.rj_rocketchat.entrypoints=websecure
+        - traefik.http.routers.rj_rocketchat.tls.certresolver=leresolver
+        - traefik.http.services.rj_rocketchat.loadbalancer.server.port=3000
+        - traefik.http.routers.rj_rocketchat.middlewares=redirect-www
+
+  mongodb:
+    image: docker.io/bitnami/mongodb:5.0
+    restart: always
+    networks:
+      - internal
+    volumes:
+      - rocketchatDataVol1:/bitnami/mongodb
+    environment:
+      MONGODB_REPLICA_SET_MODE: primary
+      MONGODB_REPLICA_SET_NAME: rs0
+      MONGODB_PORT_NUMBER: 27017
+      MONGODB_INITIAL_PRIMARY_HOST: mongodb
+      MONGODB_INITIAL_PRIMARY_PORT_NUMBER: 27017
+      MONGODB_ADVERTISED_HOSTNAME: mongodb
+      MONGODB_ENABLE_JOURNAL: "true"
+      ALLOW_EMPTY_PASSWORD: "yes"
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ node.labels.project == rencontrejeunesse ]
+      labels:
+        - traefik.enable=false
+
+volumes:
+  rocketchatDataVol1:
+
+networks:
+  public:
+    external: true
+  internal:
