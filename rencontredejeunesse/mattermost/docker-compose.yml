@@ -1,0 +1,71 @@
+# rj_mattermost
+
+version: "3"
+
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    networks:
+      - internal
+    volumes:
+      - mattermostDatabaseVol:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: mattermost
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: mattermost
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ node.labels.project == rencontrejeunesse ]
+      labels:
+        - traefik.enable=false
+
+  mattermost:
+    # mattermost runs on port 8065
+    depends_on:
+      - postgres
+    image: mattermost/mattermost-team-edition:latest
+    restart: always
+    networks:
+      - internal
+      - public
+    volumes:
+      - mattermostConfigVol:/mattermost/config:rw
+      - mattermostDataVol:/mattermost/data:rw
+      - mattermostLogsVol:/mattermost/logs:rw
+      - mattermostPluginsVol:/mattermost/plugins:rw
+      - mattermostClientPluginsVol:/mattermost/client/plugins:rw
+      - mattermostBleveIndexesVol:/mattermost/bleve-indexes:rw
+    environment:
+      MM_SQLSETTINGS_DRIVERNAME: postgres
+      MM_SQLSETTINGS_DATASOURCE: postgres://mattermost:${POSTGRES_PASSWORD}@postgres:5432/mattermost?sslmode=disable&connect_timeout=10
+      MM_BLEVESETTINGS_INDEXDIR: /mattermost/bleve-indexes
+      MM_SERVICESETTINGS_SITEURL: https://chat.rencontredejeunesse.ch
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ node.labels.project == rencontrejeunesse ]
+      labels:
+        # mattermost
+        - traefik.http.routers.rj_mattermost.rule=Host(`chat.rencontredejeunesse.ch`) || Host(`www.chat.rencontredejeunesse.ch`)
+        - traefik.http.routers.rj_mattermost.entrypoints=websecure
+        - traefik.http.routers.rj_mattermost.tls.certresolver=leresolver
+        - traefik.http.services.rj_mattermost.loadbalancer.server.port=8065
+        - traefik.http.routers.rj_mattermost.middlewares=redirect-www
+
+volumes:
+  mattermostDatabaseVol:
+  mattermostConfigVol:
+  mattermostDataVol:
+  mattermostLogsVol:
+  mattermostPluginsVol:
+  mattermostClientPluginsVol:
+  mattermostBleveIndexesVol:
+
+networks:
+  public:
+    external: true
+  internal:
