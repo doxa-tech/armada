@@ -1,0 +1,143 @@
+# stack name: rj_zulip
+
+version: '3'
+
+services:
+  database:
+    image: "zulip/zulip-postgresql:14"
+    restart: always
+    networks:
+      - internal
+    environment:
+      POSTGRES_DB: zulip
+      POSTGRES_USER: zulip
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - databaseDataVol:/var/lib/postgresql/data:rw
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ node.labels.project == rencontrejeunesse ]
+      labels:
+        - traefik.enable=false
+  
+  memcached:
+    image: memcached:alpine
+    restart: always
+    networks:
+      - internal
+    command:
+      - "sh"
+      - "-euc"
+      - |
+        echo 'mech_list: plain' > "$$SASL_CONF_PATH"
+        echo "zulip@$$HOSTNAME:$$MEMCACHED_PASSWORD" > "$$MEMCACHED_SASL_PWDB"
+        echo "zulip@localhost:$$MEMCACHED_PASSWORD" >> "$$MEMCACHED_SASL_PWDB"
+        exec memcached -S
+    environment:
+      SASL_CONF_PATH: /home/memcache/memcached.conf
+      MEMCACHED_SASL_PWDB: /home/memcache/memcached-sasl-db
+      MEMCACHED_PASSWORD: ${MEMCACHED_PASSWORD}
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ node.labels.project == rencontrejeunesse ]
+      labels:
+        - traefik.enable=false
+  
+  rabbitmq:
+    image: rabbitmq:3.12.14
+    restart: always
+    networks:
+      - internal
+    environment:
+      RABBITMQ_DEFAULT_USER: zulip
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    volumes:
+      - rabbitDataVol:/var/lib/rabbitmq:rw
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ node.labels.project == rencontrejeunesse ]
+      labels:
+        - traefik.enable=false
+
+  redis:
+    image: redis:alpine
+    restart: always
+    networks:
+      - internal
+    command:
+      - "sh"
+      - "-euc"
+      - |
+        echo "requirepass '$$REDIS_PASSWORD'" > /etc/redis.conf
+        exec redis-server /etc/redis.conf
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    volumes:
+      - redisDataVol:/data:rw
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ node.labels.project == rencontrejeunesse ]
+      labels:
+        - traefik.enable=false
+  
+  zulip:
+    # zulip runs on port 80 
+    image: zulip/docker-zulip:9.2-0
+    restart: always
+    networks:
+      - public
+      - internal
+    environment:
+      DB_HOST: database
+      DB_HOST_PORT: 5432
+      DB_USER: zulip
+      SSL_CERTIFICATE_GENERATION: self-signed
+      SETTING_MEMCACHED_LOCATION: memcached:11211
+      SETTING_RABBITMQ_HOST: rabbitmq
+      SETTING_REDIS_HOST: redis
+      SECRETS_rabbitmq_password: ${RABBITMQ_PASSWORD}
+      SECRETS_postgres_password: ${POSTGRES_PASSWORD}
+      SECRETS_memcached_password: ${MEMCACHED_PASSWORD}
+      SECRETS_redis_password: ${REDIS_PASSWORD}
+      SECRETS_secret_key: ${APP_SECRET}
+      SETTING_EXTERNAL_HOST: chat.rencontredejeunesse.ch
+      SETTING_ZULIP_ADMINISTRATOR: "keran.ko@rencontredejeunesse.ch"
+      LOADBALANCER_IPS: "10.0.2.2"
+      DISABLE_HTTPS: "True"
+    volumes:
+      - zulipDataVol:/data:rw
+    ulimits:
+      nofile:
+        soft: 1000000
+        hard: 1048576
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [ node.labels.project == rencontrejeunesse ]
+      labels:
+        # zulip
+        - traefik.http.routers.rj_zulip.rule=Host(`chat.rencontredejeunesse.ch`) || Host(`www.chat.rencontredejeunesse.ch`)
+        - traefik.http.routers.rj_zulip.entrypoints=websecure
+        - traefik.http.routers.rj_zulip.tls.certresolver=leresolver
+        - traefik.http.services.rj_zulip.loadbalancer.server.port=80
+        - traefik.http.routers.rj_zulip.middlewares=redirect-www
+
+volumes:
+  databaseDataVol:
+  rabbitDataVol:
+  redisDataVol:
+  zulipDataVol:
+
+networks:
+  public:
+    external: true
+  internal:
