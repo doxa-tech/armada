@@ -9,10 +9,18 @@ services:
       - db
       - redis
     environment:
-      APP_URL: 'http://localhost:3000'
+      APP_URL: 'https://wiki.doxatech.ch'
       APP_SECRET: ${APP_SECRET}
       DATABASE_URL: 'postgresql://docmost:${DB_PASSWORD}@db:5432/docmost?schema=public'
       REDIS_URL: 'redis://redis:6379'
+      MAIL_DRIVER: smtp
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      SMTP_SECURE: "true"
+      MAIL_FROM_ADDRESS: noreply@doxatech.ch
+      MAIL_FROM_NAME: Docmost
     networks:
       - public
       - internal
