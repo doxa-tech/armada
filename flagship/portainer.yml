@@ -51,7 +51,7 @@ services:
         - traefik.http.middlewares.redirect-www.redirectregex.permanent=true
 
   agent:
-    image: portainer/agent:2.19.1
+    image: portainer/agent:2.21.5
     environment:
       # REQUIRED: Should be equal to the service name prefixed by "tasks." when
       # deployed inside an overlay network
@@ -69,13 +69,17 @@ services:
         - traefik.enable=false
 
   portainer:
-    image: portainer/portainer-ce:2.19.1
+    image: portainer/portainer-ce:2.21.5
     command: -H tcp://tasks.agent:9001 --tlsskipverify
     volumes:
       - portainer_data:/data
     networks:
       - public
       - agent_network
+    ports:
+      - "9443:9443"
+      - "9000:9000"
+      - "8000:8000"
     deploy:
       mode: replicated
       replicas: 1
@@ -91,7 +95,8 @@ networks:
   public:
     external: true
   agent_network:
-    external: true
+    driver: overlay
+    attachable: true
 
 volumes:
   portainer_data:
