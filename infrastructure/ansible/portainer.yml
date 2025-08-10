@@ -1,0 +1,31 @@
+
+- name: Install portainer
+  hosts: proxy
+  become: yes
+  vars_prompt:
+    - name: "CLOUDFLARE_DNS_API_TOKEN"
+      prompt: "Enter a Cloudflare token"
+      private: yes
+  tasks:
+    - name: Template Portainer stack file
+      template:
+        src: ../../flagship/portainer.yml.j2
+        dest: portainer.yml
+
+    - name: Create ACME file for Traefik
+      file:
+        path: acme.json
+        state: touch
+        mode: '0600'
+
+    - name: Check if 'public' network exists
+      command: docker network inspect public
+      register: network_check
+      ignore_errors: yes
+
+    - name: Create public network
+      command: docker network create -d overlay public
+      when: network_check.failed
+    
+    - name: Deploy portainer stack
+      command: docker stack deploy -c portainer.yml portainer

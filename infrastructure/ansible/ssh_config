@@ -1,0 +1,27 @@
+Host proxy
+  User debian
+  HostName 83.228.202.97
+  IdentityFile ~/.ssh/armada_ed25519
+  IdentitiesOnly yes
+
+Host database
+  User debian
+  HostName 192.168.10.100
+  IdentityFile ~/.ssh/armada_ed25519
+  ProxyJump proxy
+  IdentitiesOnly yes
+
+Host worker-1
+  User debian
+  HostName 192.168.10.25
+  IdentityFile ~/.ssh/armada_ed25519
+  ProxyJump proxy
+  IdentitiesOnly yes
+
+Host worker-2
+  User debian
+  HostName 192.168.10.77
+  IdentityFile ~/.ssh/armada_ed25519
+  ProxyJump proxy
+  IdentitiesOnly yes
+  

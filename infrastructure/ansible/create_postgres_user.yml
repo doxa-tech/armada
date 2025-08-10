@@ -1,0 +1,29 @@
+---
+- name: Create Postgres user
+  hosts: database
+  become: true
+  vars_prompt:
+    - name: "pg_user"
+      prompt: "Enter Postgres username"
+      private: no
+
+    - name: "pg_password"
+      prompt: "Enter password"
+      private: yes
+
+    - name: "pg_database"
+      prompt: "Enter database name"
+      private: no
+
+  tasks:
+    - name: Create Postgres user exists
+      become_user: postgres
+      community.postgresql.postgresql_user:
+        name: "{{ pg_user }}"
+        password: "{{ pg_password }}"
+
+    - name: Create the database
+      become_user: postgres
+      community.postgresql.postgresql_db:
+        name: "{{ pg_database }}"
+        owner: "{{ pg_user }}"

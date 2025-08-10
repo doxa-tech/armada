@@ -1,0 +1,36 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+bootcmd:
+  - mkfs.ext4 /dev/sdb
+  - mkdir -p /mnt/data
+  - mount /dev/sdb /mnt/data
+  - echo '/dev/sdb /mnt/data ext4 defaults 0 0' >> /etc/fstab
+  - mkdir -p /mnt/data/postgres
+packages:
+  - postgresql
+  - rsync
+  - python3-psycopg2 # required for ansible.postgres
+  - acl # required for become_user
+write_files:
+  - path: /etc/postgresql/15/main/conf.d/custom.conf
+    defer: true
+    content: |
+      # Listen to the external connection
+      listen_addresses = '*'
+      # Put data in an volume
+      data_directory = '/mnt/data/postgres'
+  
+  - path: /etc/postgresql/15/main/pg_hba.conf
+    defer: true
+    content: |
+      # TYPE  DATABASE        USER            ADDRESS                 METHOD
+      local   all             all                                     peer
+      host    all             all             192.168.10.0/24         scram-sha-256
+
+runcmd:
+  - systemctl stop postgresql
+  - chown postgres:postgres /mnt/data/postgres
+  - chmod 700 /mnt/data/postgres
+  - rsync -a /var/lib/postgresql/15/main/ /mnt/data/postgres
+  - systemctl start postgresql
