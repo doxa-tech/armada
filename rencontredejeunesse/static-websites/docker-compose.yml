@@ -14,6 +14,9 @@ services:
       - public
     deploy:
       mode: replicated
+      placement:
+        constraints:
+          - node.hostname==worker-2
       replicas: 1
       labels:
         # webserver
@@ -34,12 +37,15 @@ services:
       - source: rj_hodor_conf
         target: /data/config.json
     volumes:
-      - "staticWebsitesVol2:/deploy/"
-      - "hodorVol1:/data/"
+      - staticWebsitesVol2:/deploy/
+      - hodorVol1:/data/
     networks:
       - public
     deploy:
       mode: replicated
+      placement:
+        constraints:
+          - node.hostname==worker-2
       replicas: 1
       labels:
         # hodor
