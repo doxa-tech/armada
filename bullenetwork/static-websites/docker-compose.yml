@@ -15,8 +15,6 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-      placement:
-        constraints: [ node.labels.project == bullenetwork ]
       labels:
         # webserver
         - traefik.http.routers.bn_static-websites_webserver.rule=Host(`www.eebulle.ch`) || Host(`eebulle.ch`) || Host(`www.bullenetwork.ch`) || Host(`bullenetwork.ch`) || Host(`www.o2vie-chatel.ch`) || Host(`o2vie-chatel.ch`) || Host(`www.enhaut.eebulle.ch`) || Host(`enhaut.eebulle.ch`) || Host(`www.waykup.ch`) || Host(`waykup.ch`)
@@ -52,8 +50,6 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-      placement:
-        constraints: [ node.labels.project == bullenetwork ]
       labels:
         # hodor
         - traefik.http.routers.bn_static-websites_hodor.rule=Host(`hodor.doxatech.ch`)

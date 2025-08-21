@@ -15,8 +15,6 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-      placement:
-        constraints: [ node.labels.project == rencontrejeunesse ]
       labels:
         # webserver
         - traefik.http.routers.rj_static-websites_webserver.rule=Host(`rencontredejeunesse.ch`) || Host(`www.rencontredejeunesse.ch`)
@@ -43,8 +41,6 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-      placement:
-        constraints: [ node.labels.project == rencontrejeunesse ]
       labels:
         # hodor
         - traefik.http.routers.rj_static-websites_hodor.rule=Host(`hodor.rencontredejeunesse.ch`)
