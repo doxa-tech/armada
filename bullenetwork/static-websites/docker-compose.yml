@@ -14,21 +14,16 @@ services:
       - public
     deploy:
       mode: replicated
+      placement:
+        constraints:
+          - node.hostname==worker-2
       replicas: 1
       labels:
         # webserver
-        - traefik.http.routers.bn_static-websites_webserver.rule=Host(`www.eebulle.ch`) || Host(`eebulle.ch`) || Host(`www.bullenetwork.ch`) || Host(`bullenetwork.ch`) || Host(`www.o2vie-chatel.ch`) || Host(`o2vie-chatel.ch`) || Host(`www.enhaut.eebulle.ch`) || Host(`enhaut.eebulle.ch`) || Host(`www.waykup.ch`) || Host(`waykup.ch`)
+        - traefik.http.routers.bn_static-websites_webserver.rule=Host(`www.bullenetwork.ch`) || Host(`bullenetwork.ch`) || Host(`www.o2vie-chatel.ch`) || Host(`o2vie-chatel.ch`) || Host(`www.enhaut.bullenetwork.ch`) || Host(`enhaut.bullenetwork.ch`) || Host(`www.waykup.ch`) || Host(`waykup.ch`)
         - traefik.http.routers.bn_static-websites_webserver.entrypoints=websecure
         - traefik.http.routers.bn_static-websites_webserver.tls.certresolver=leresolver
         - traefik.http.services.bn_static-websites_webserver.loadbalancer.server.port=80
-        # redirect
-        - traefik.http.routers.bn_quartierlibre.rule=Host(`quartierlibreromont.ch`)
-        - traefik.http.routers.bn_quartierlibre.middlewares=quartierlibre-redirect
-        - traefik.http.routers.bn_quartierlibre.entrypoints=websecure
-        - traefik.http.routers.bn_quartierlibre.tls.certresolver=leresolver
-        - traefik.http.middlewares.quartierlibre-redirect.redirectregex.regex=^.*
-        - traefik.http.middlewares.quartierlibre-redirect.redirectregex.replacement=https://bullenetwork.ch/quartier-libre
-        - traefik.http.middlewares.quartierlibre-redirect.redirectregex.permanent=true
         # www redirect
         - traefik.http.routers.bn_static-websites_webserver.middlewares=redirect-www
 
@@ -43,12 +38,15 @@ services:
       - source: bn_hodor_conf
         target: /data/config.json
     volumes:
-      - "staticWebsitesVol2:/deploy/"
-      - "hodorVol1:/data/"
+      - staticWebsitesVol2:/deploy/
+      - hodorVol1:/data/ 
     networks:
       - public
     deploy:
       mode: replicated
+      placement:
+        constraints:
+          - node.hostname==worker-2
       replicas: 1
       labels:
         # hodor
