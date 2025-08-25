@@ -3,25 +3,6 @@
 version: "3.9"
 
 services:
-  database:
-    # Postgres runs on port 5432
-    image: postgres:15
-    volumes:
-      - directusDataVol1:/var/lib/postgresql/data
-    networks:
-      - internal
-    environment:
-      POSTGRES_USER: 'directus'
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: 'directus'
-    deploy:
-      mode: replicated
-      replicas: 1
-      placement:
-        constraints: [ node.labels.project == bullenetwork ]
-      labels:
-        - traefik.enable=false
-
   cache:
     # Redis runs on port 6379
     image: redis:7.0.4
@@ -30,8 +11,6 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-      placement:
-        constraints: [ node.labels.project == bullenetwork ]
       labels:
         - traefik.enable=false
 
@@ -44,8 +23,6 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-      placement:
-        constraints: [ node.labels.project == bullenetwork ]
       labels:
         - traefik.http.routers.bn_directus.rule=Host(`vanil.bullenetwork.ch`)
         - traefik.http.routers.bn_directus.entrypoints=websecure
@@ -55,7 +32,6 @@ services:
         - traefik.http.middlewares.bn_file_transfer.buffering.maxRequestBodyBytes=512000000 # 512 MB
     depends_on:
       - cache
-      - database
     environment:
       KEY: ${DIRECTUS_KEY}
       SECRET: ${DIRECTUS_SECRET}
@@ -103,8 +79,6 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-      placement:
-        constraints: [ node.labels.project == bullenetwork ]
       labels:
         - traefik.http.routers.bn_gcsauth.rule=Host(`gcsauth.bullenetwork.ch`)
         - traefik.http.routers.bn_gcsauth.entrypoints=websecure
@@ -122,10 +96,6 @@ networks:
     external: true
   internal:
 
-
 secrets:
   bn_directus_gcs_key:
     external: true
-
-volumes:
-  directusDataVol1:
