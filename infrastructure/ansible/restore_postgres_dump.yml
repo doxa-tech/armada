@@ -1,0 +1,38 @@
+---
+- name: Restore data from dump
+  hosts: database
+  become: yes
+  vars_prompt:
+    - name: "pg_database"
+      prompt: "Enter database name"
+      private: no
+    - name: "pg_user"
+      prompt: "Enter database user"
+      private: no
+    - name: "dump_file"
+      prompt: "Enter path to dump file"
+      private: no
+
+  tasks:
+    - name: Copy dump file to remote
+      copy:
+        src: "{{ dump_file }}"
+        dest: "/tmp/{{ pg_database }}.sql"
+        mode: '0644'
+
+    - name: Drop existing database (if any)
+      become_user: postgres
+      community.postgresql.postgresql_db:
+        name: "{{ pg_database }}"
+        state: absent
+
+    - name: Create new empty database
+      become_user: postgres
+      community.postgresql.postgresql_db:
+        name: "{{ pg_database }}"
+        owner: "{{ pg_user }}"
+
+    # works with .sql backup files
+    - name: Restore database from dump
+      become_user: postgres
+      command: psql --dbname {{ pg_database }} -f /tmp/{{ pg_database }}.sql

@@ -26,3 +26,18 @@ ansible-playbook init_swarm.yml
 ansible-playbook portainer.yml
 ```
 
+To connect to a service
+
+```
+ssh -F ssh-config <hostname>
+```
+
+## Add a service
+
+### Database
+
+Create a new user and a database
+
+```
+ansible-playbook create_postgres_user.yml
+```

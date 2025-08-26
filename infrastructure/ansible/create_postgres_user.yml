@@ -16,7 +16,7 @@
       private: no
 
   tasks:
-    - name: Create Postgres user exists
+    - name: Create Postgres user
       become_user: postgres
       community.postgresql.postgresql_user:
         name: "{{ pg_user }}"
