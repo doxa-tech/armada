@@ -15,8 +15,6 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-      placement:
-        constraints: [ node.role == manager ]
       labels:
         - traefik.enable=false
 
@@ -30,8 +28,6 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-      placement:
-        constraints: [ node.role == manager ]
       labels:
         - traefik.http.routers.fs_monitoring_grafana.rule=Host(`monitoring.doxatech.ch`)
         - traefik.http.routers.fs_monitoring_grafana.entrypoints=websecure
