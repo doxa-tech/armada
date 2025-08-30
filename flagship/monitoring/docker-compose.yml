@@ -5,16 +5,21 @@ services:
   prometheus:
     # Prometheus runs on port 9090
     image: prom/prometheus:latest
+    user: root
     configs:
       - source: fs_prometheus_conf
         target: /etc/prometheus/prometheus.yml
     networks:
       - public
+      - internal
     volumes:
       - promotheusDataVol1:/etc/prometheus
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     deploy:
       mode: replicated
       replicas: 1
+      placement:
+        constraints: [node.role == manager]
       labels:
         - traefik.enable=false
 
@@ -33,9 +38,26 @@ services:
         - traefik.http.routers.fs_monitoring_grafana.entrypoints=websecure
         - traefik.http.routers.fs_monitoring_grafana.tls.certresolver=leresolver
         - traefik.http.services.fs_monitoring_grafana.loadbalancer.server.port=3000
+
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    networks:
+      - internal
+    command:
+      - '--path.rootfs=/host'
+    network_mode: host
+    pid: host
+    volumes:
+      - '/:/host:ro,rslave'
+    deploy:
+      mode: global
+      labels:
+        - traefik.enable=false
+
 networks:
   public:
     external: true
+  internal:
 
 volumes:
   promotheusDataVol1:
