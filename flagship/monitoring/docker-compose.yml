@@ -15,6 +15,8 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+      placement:
+        constraints: [node.role == manager]
       labels:
         - traefik.enable=false
 
@@ -33,6 +35,7 @@ services:
         - traefik.http.routers.fs_monitoring_grafana.entrypoints=websecure
         - traefik.http.routers.fs_monitoring_grafana.tls.certresolver=leresolver
         - traefik.http.services.fs_monitoring_grafana.loadbalancer.server.port=3000
+
 networks:
   public:
     external: true
