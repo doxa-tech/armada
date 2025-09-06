@@ -1,0 +1,44 @@
+---
+- name: Setup Postgres backup
+  hosts: database
+  become: yes
+  vars:
+    backup_dir: /mnt/data/backup/postgres
+    backup_user: postgres
+    retention_days: 30
+
+  tasks:
+    - name: Ensure backup directory exists
+      file:
+        path: "{{ backup_dir }}"
+        state: directory
+        owner: "{{ backup_user }}"
+        group: "{{ backup_user }}"
+        mode: '0750'
+
+    - name: Install backup script
+      copy:
+        dest: /usr/local/bin/pg_backup.sh
+        mode: '0750'
+        owner: "{{ backup_user }}"
+        group: "{{ backup_user }}"
+        content: |
+          #!/bin/bash
+          set -e
+          BACKUP_DIR="{{ backup_dir }}"
+          TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+          FILENAME="database_${TIMESTAMP}.sql.gz"
+
+          # Create backup
+          pg_dumpall | gzip > "${BACKUP_DIR}/${FILENAME}"
+
+          # Remove old backups (keep last {{ retention_days }} days)
+          find "$BACKUP_DIR" -name "database_*.sql.gz" -type f -mtime +{{ retention_days }} -delete
+
+    - name: Setup daily cron job
+      cron:
+        name: "Postgres daily backup"
+        user: postgres
+        job: "/usr/local/bin/pg_backup.sh"
+        hour: "2"
+        minute: "0"

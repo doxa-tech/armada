@@ -1,4 +1,4 @@
-
+---
 - name: Initialize Docker Swarm
   hosts: managers
   become: yes

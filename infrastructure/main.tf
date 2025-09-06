@@ -124,7 +124,7 @@ resource "openstack_compute_volume_attach_v2" "attach_worker_volumes" {
 resource "openstack_compute_instance_v2" "database" {
   name            = "database"
   flavor_name     = "a1-ram2-disk20-perf1"
-  security_groups = ["default"]
+  security_groups = ["sg-database"]
   image_name      = "Debian 12 bookworm"
   key_pair        = openstack_compute_keypair_v2.armada_keypair.name
 
