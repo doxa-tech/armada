@@ -1,4 +1,5 @@
 
+
 #
 # Proxy security group
 #
@@ -39,6 +40,17 @@ resource "openstack_networking_secgroup_rule_v2" "sg_proxy_icmp" {
   direction         = "ingress"
   ethertype         = "IPv4"
   protocol          = "icmp"
+  security_group_id = openstack_networking_secgroup_v2.sg_proxy.id
+}
+
+# Node exporter
+resource "openstack_networking_secgroup_rule_v2" "sg_proxy_node_exporter" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 9100
+  port_range_max    = 9100
+  remote_ip_prefix  = "192.168.10.0/24"
   security_group_id = openstack_networking_secgroup_v2.sg_proxy.id
 }
 
@@ -105,6 +117,16 @@ resource "openstack_networking_secgroup_rule_v2" "sg_swarm_overlay" {
   security_group_id = openstack_networking_secgroup_v2.sg_swarm.id
 }
 
+# Node exporter
+resource "openstack_networking_secgroup_rule_v2" "sg_swarm_node_exporter" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 9100
+  port_range_max    = 9100
+  remote_ip_prefix  = "192.168.10.0/24"
+  security_group_id = openstack_networking_secgroup_v2.sg_swarm.id
+}
 
 #
 # Database security group
@@ -132,5 +154,16 @@ resource "openstack_networking_secgroup_rule_v2" "sg_database_ssh" {
   protocol          = "tcp"
   port_range_min    = 22
   port_range_max    = 22
+  security_group_id = openstack_networking_secgroup_v2.sg_database.id
+}
+
+# Node exporter
+resource "openstack_networking_secgroup_rule_v2" "sg_database_node_exporter" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 9100
+  port_range_max    = 9100
+  remote_ip_prefix  = "192.168.10.0/24"
   security_group_id = openstack_networking_secgroup_v2.sg_database.id
 }
