@@ -20,7 +20,7 @@ services:
       replicas: 1
       labels:
         # webserver
-        - traefik.http.routers.bn_static-websites_webserver.rule=Host(Host(`medias.bullenetwork.ch`) || Host(`www.o2vie-chatel.ch`) || Host(`o2vie-chatel.ch`) || Host(`www.enhaut.bullenetwork.ch`) || Host(`enhaut.bullenetwork.ch`) || Host(`www.waykup.ch`) || Host(`waykup.ch`)
+        - traefik.http.routers.bn_static-websites_webserver.rule=Host(`medias.bullenetwork.ch`) || Host(`www.o2vie-chatel.ch`) || Host(`o2vie-chatel.ch`) || Host(`www.enhaut.bullenetwork.ch`) || Host(`enhaut.bullenetwork.ch`) || Host(`www.waykup.ch`) || Host(`waykup.ch`)
         - traefik.http.routers.bn_static-websites_webserver.entrypoints=websecure
         - traefik.http.routers.bn_static-websites_webserver.tls.certresolver=leresolver
         - traefik.http.services.bn_static-websites_webserver.loadbalancer.server.port=80
