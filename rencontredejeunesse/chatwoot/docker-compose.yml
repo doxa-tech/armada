@@ -12,7 +12,6 @@ services:
       - internal
       - public
     depends_on:
-      - postgres
       - redis
     environment:
       NODE_ENV: production
@@ -21,9 +20,9 @@ services:
       FRONTEND_URL: https://support.rencontredejeunesse.ch
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       REDIS_URL: redis://redis:6379
-      POSTGRES_HOST: postgres
+      POSTGRES_HOST: database
       POSTGRES_DATABASE: chatwoot
-      POSTGRES_USERNAME: postgres
+      POSTGRES_USERNAME: chatwoot
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       SECRET_KEY_BASE: ${SECRET_KEY_BASE}
       MAILER_SENDER_EMAIL: ${MAILER_SENDER_EMAIL}
@@ -43,8 +42,6 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-      placement:
-        constraints: [ node.labels.project == rencontrejeunesse ]
       labels:
         # rails
         - traefik.http.routers.rj_chatwoot_rails.rule=Host(`support.rencontredejeunesse.ch`) || Host(`www.support.rencontredejeunesse.ch`)
@@ -58,7 +55,6 @@ services:
     networks:
       - internal
     depends_on:
-      - postgres
       - redis
     environment:
       NODE_ENV: production
@@ -67,9 +63,9 @@ services:
       FRONTEND_URL: https://support.rencontredejeunesse.ch
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       REDIS_URL: redis://redis:6379
-      POSTGRES_HOST: postgres
+      POSTGRES_HOST: database
       POSTGRES_DATABASE: chatwoot
-      POSTGRES_USERNAME: postgres
+      POSTGRES_USERNAME: chatwoot
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       SECRET_KEY_BASE: ${SECRET_KEY_BASE}
       MAILER_SENDER_EMAIL: ${MAILER_SENDER_EMAIL}
@@ -88,33 +84,11 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-      placement:
-        constraints: [ node.labels.project == rencontrejeunesse ]
-      labels:
-        - traefik.enable=false
-
-  postgres:
-    # postgres runs on port 5432
-    networks:
-      - internal
-    image: postgres:12
-    restart: always
-    volumes:
-      - postgresDataVol1:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: chatwoot
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    deploy:
-      mode: replicated
-      replicas: 1
-      placement:
-        constraints: [ node.labels.project == rencontrejeunesse ]
       labels:
         - traefik.enable=false
 
   redis:
-    # postgres runs on port 6379
+    # redis runs on port 6379
     networks:
       - internal
     image: redis:alpine
@@ -125,8 +99,6 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-      placement:
-        constraints: [ node.labels.project == rencontrejeunesse ]
       labels:
         - traefik.enable=false
 
@@ -136,6 +108,5 @@ networks:
   internal:
 
 volumes:
-  postgresDataVol1:
   redisDataVol1:
   chatwootDataVol1:
