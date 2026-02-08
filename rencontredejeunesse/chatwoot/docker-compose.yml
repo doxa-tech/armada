@@ -20,10 +20,7 @@ services:
       FRONTEND_URL: https://support.rencontredejeunesse.ch
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       REDIS_URL: redis://redis:6379
-      POSTGRES_HOST: database
-      POSTGRES_DATABASE: chatwoot
-      POSTGRES_USERNAME: chatwoot
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DATABASE_URL: postgresql://chatwoot:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/chatwoot
       SECRET_KEY_BASE: ${SECRET_KEY_BASE}
       MAILER_SENDER_EMAIL: ${MAILER_SENDER_EMAIL}
       SMTP_ADDRESS: ${SMTP_ADDRESS}
@@ -63,10 +60,7 @@ services:
       FRONTEND_URL: https://support.rencontredejeunesse.ch
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       REDIS_URL: redis://redis:6379
-      POSTGRES_HOST: database
-      POSTGRES_DATABASE: chatwoot
-      POSTGRES_USERNAME: chatwoot
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DATABASE_URL: postgresql://chatwoot:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/chatwoot
       SECRET_KEY_BASE: ${SECRET_KEY_BASE}
       MAILER_SENDER_EMAIL: ${MAILER_SENDER_EMAIL}
       SMTP_ADDRESS: ${SMTP_ADDRESS}
