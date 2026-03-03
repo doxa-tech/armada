@@ -1,0 +1,25 @@
+---
+- name: Reset Postgres database
+  hosts: database
+  become: true
+  vars_prompt:
+    - name: "pg_database"
+      prompt: "Enter database name to reset"
+      private: no
+
+    - name: "pg_owner"
+      prompt: "Enter database owner"
+      private: no
+
+  tasks:
+    - name: Drop the database
+      become_user: postgres
+      community.postgresql.postgresql_db:
+        name: "{{ pg_database }}"
+        state: absent
+
+    - name: Recreate the database
+      become_user: postgres
+      community.postgresql.postgresql_db:
+        name: "{{ pg_database }}"
+        owner: "{{ pg_owner }}"
