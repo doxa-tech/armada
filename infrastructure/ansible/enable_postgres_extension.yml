@@ -1,0 +1,19 @@
+---
+- name: Enable Postgres extension
+  hosts: database
+  become: true
+  vars_prompt:
+    - name: "pg_database"
+      prompt: "Enter database on which to enable the Postgres extension"
+      private: no
+    - name : "extension_name"
+      prompt: "Enter the name of the extension to enable"
+      private: no
+
+  tasks:
+    - name: Enable Postgres extension
+      become_user: postgres
+      community.postgresql.postgresql_ext:
+        name: "{{ extension_name }}"
+        login_db: "{{ pg_database }}"
+        state: present

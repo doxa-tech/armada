@@ -1,4 +1,6 @@
 ---
+- name: Install `node_exporter` on all servers
+  become: true
 - hosts: all
   roles:
     - prometheus.prometheus.node_exporter

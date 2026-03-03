@@ -1,0 +1,18 @@
+---
+- name: Install `pgvector` for Postgres 15
+  hosts: database
+  become: true
+
+  tasks:
+    - name: Install prerequisites
+      apt:
+        name:
+          - postgresql-common
+          - ca-certificates
+
+    - name: Add Postgres repository
+      command: /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+
+    - name: Install pgvector package
+      apt:
+        name: postgresql-15-pgvector
