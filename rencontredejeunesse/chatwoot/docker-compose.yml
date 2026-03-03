@@ -34,7 +34,7 @@ services:
       GOOGLE_OAUTH_CLIENT_SECRET: ${GOOGLE_OAUTH_CLIENT_SECRET}
 
     entrypoint: docker/entrypoints/rails.sh
-    command: ['bundle', 'exec', 'rails', 's', '-p', '3000', '-b', '0.0.0.0']
+    command: ['sh', '-c', 'bundle exec rails db:chatwoot_prepare && bundle exec rails s -p 3000 -b 0.0.0.0']
     restart: always
     deploy:
       mode: replicated
